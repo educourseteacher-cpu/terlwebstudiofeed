@@ -1,6 +1,8 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 
@@ -10,10 +12,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const isProd = process.env.NODE_ENV === 'production';
+const PORT = Number(process.env.PORT) || 3000;
+const distPath = path.resolve(__dirname, 'dist');
+const hasDist = fs.existsSync(path.resolve(distPath, 'index.html'));
+const isProd = process.env.NODE_ENV === 'production' || hasDist;
 
 app.use(express.json({ limit: '10mb' }));
+
+// Enable CORS for all routes
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Health check endpoint for Cloud Run
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() });
+});
 
 // Initialize Gemini Client
 const getGeminiClient = () => {
@@ -34,9 +54,9 @@ function getFallbackFeed(prompt: string, theme: string) {
   const cleanPrompt = prompt.trim() || 'Strategi Membangun Website & Branding Bisnis Modern';
   return {
     mainTitle: cleanPrompt.length > 50 ? cleanPrompt.substring(0, 50).toUpperCase() : cleanPrompt.toUpperCase(),
-    highlightBanner: theme === 'foresttype' ? 'MO\nLEN' : 'BEDA LEVEL',
+    highlightBanner: theme === 'foresttype' ? 'MO\nLEN' : theme === 'techhook' ? 'BEDA LEVEL' : 'PRO TIPS',
     subtitle: 'PANDUAN PRAKTIS 2026',
-    headerBadge: theme === 'techhook' ? 'CLAUDE CODE' : 'HIGH IMPACT INSIGHT',
+    headerBadge: theme === 'techhook' ? 'CLAUDE CODE' : theme === 'foresttype' ? 'TYPOGRAPHY' : 'HIGH IMPACT INSIGHT',
     points: [
       {
         number: '01',
@@ -57,7 +77,8 @@ function getFallbackFeed(prompt: string, theme: string) {
         tag: 'CONVERSION'
       }
     ],
-    footer: 'KAMI MEMBANGUN DIGITAL IDENTITY YANG MENGHASILKAN PROFIT',
+    footer: theme === 'techhook' ? '@terl.studio' : theme === 'foresttype' ? 'Penggunaan : Personal Use' : 'KAMI MEMBANGUN DIGITAL IDENTITY YANG MENGHASILKAN PROFIT',
+    subLink: theme === 'techhook' ? 'Geser ❯' : theme === 'foresttype' ? 'Download : freefonts.io' : undefined,
     caption: `🔥 ${cleanPrompt} — Simak 3 fondasi penting ini sebelum terlambat!\n\nDi era serba cepat, audiens Anda tidak membaca melainkan memindai (skimming). Jika pesan Anda rumit, mereka akan berpindah ke kompetitor.\n\nSimpan postingan ini agar tidak lupa! 📌\n\nBagikan pendapat Anda di kolom komentar 👇`,
     hashtags: [
       '#webdesign', '#webdevelopment', '#instagramtips', '#agencylife',
@@ -76,6 +97,7 @@ function getFallbackCarousel(prompt: string, slideCount: number = 5) {
     slideType: 'cover',
     badge: 'SLIDE 01 // OVERVIEW',
     title: cleanPrompt.toUpperCase(),
+    highlightBanner: 'BEDA LEVEL',
     description: 'Framework teruji untuk menaikkan reputasi brand dan konversi penjualan.',
     statNumber: '10X',
     statLabel: 'Peningkatan Trust'
@@ -187,7 +209,6 @@ Kembalikan respon JSON VALID TANPA MARKDOWN format:
     return res.json({ success: true, data: parsed, isFallback: false });
   } catch (err: any) {
     console.error('Error generating feed with Gemini:', err);
-    // Graceful fallback to prevent user frustration
     return res.json({
       success: true,
       data: getFallbackFeed(prompt, theme),
@@ -199,7 +220,7 @@ Kembalikan respon JSON VALID TANPA MARKDOWN format:
 
 // 2. Carousel Generator Endpoint
 app.post('/api/generate-carousel', async (req: Request, res: Response) => {
-  const { prompt, slideCount = 5, targetAudience = 'Entrepreneurs & Creatives', language = 'id' } = req.body;
+  const { prompt, slideCount = 5, targetAudience = 'Entrepreneurs & Creatives', language = 'id', theme = 'brutalism' } = req.body;
 
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'Prompt is required' });
@@ -264,7 +285,7 @@ Kembalikan format JSON:
   }
 });
 
-// 3. AI Hook Variants Generator
+// 3. AI Hook Variants Endpoint
 app.post('/api/enhance-hook', async (req: Request, res: Response) => {
   const { topic } = req.body;
   if (!topic) return res.status(400).json({ error: 'Topic required' });
@@ -351,24 +372,26 @@ app.get('/api/suggest-topics', (req: Request, res: Response) => {
   return res.json({ success: true, topics });
 });
 
-// Vite middleware in dev or static files in prod
+// Server Initialization
 async function startServer() {
-  if (!isProd) {
+  if (hasDist) {
+    console.log(`Production mode: Serving static files from ${distPath}`);
+    app.use(express.static(distPath));
+    app.get('*', (_req: Request, res: Response) => {
+      res.sendFile(path.resolve(distPath, 'index.html'));
+    });
+  } else {
+    console.log('Development mode: Mounting Vite middlewares');
     const { createServer } = await import('vite');
     const vite = await createServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
-    app.use(express.static(path.resolve(__dirname, 'dist')));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
-    });
   }
 
-  app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT} (isProd: ${isProd})`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server successfully running on http://0.0.0.0:${PORT} (hasDist: ${hasDist}, isProd: ${isProd})`);
   });
 }
 
