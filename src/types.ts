@@ -36,6 +36,7 @@ export interface SlideItem {
 export interface BrandSettings {
   brandName: string;
   brandSubtitle: string;
+  tagline: string;
   handle: string;
   website: string;
   customLogoUrl: string | null;

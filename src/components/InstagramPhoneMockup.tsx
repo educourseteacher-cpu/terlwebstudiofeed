@@ -56,8 +56,12 @@ export const InstagramPhoneMockup: React.FC<InstagramPhoneMockupProps> = ({
       <div className="flex items-center justify-between px-4 py-2 border-b border-slate-900">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600">
-            <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center text-xs font-black text-amber-400">
-              {brand.brandName ? brand.brandName.slice(0, 2).toUpperCase() : 'TE'}
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-0.5 overflow-hidden">
+              <img 
+                src={brand.customLogoUrl || '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png'} 
+                alt="TERL Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <div>

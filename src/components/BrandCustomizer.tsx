@@ -110,6 +110,17 @@ export const BrandCustomizer: React.FC<BrandCustomizerProps> = ({
             </div>
           </div>
 
+          <div>
+            <label className="block font-bold text-amber-400 mb-1">Brand Tagline Utama</label>
+            <input
+              type="text"
+              value={brand.tagline || ''}
+              onChange={(e) => onChangeBrand({ ...brand, tagline: e.target.value })}
+              placeholder="GROWTH YOUR BRANDING"
+              className="w-full bg-slate-950 border border-amber-400/50 rounded-xl px-3 py-2 text-amber-300 font-bold focus:ring-2 focus:ring-amber-400 outline-none"
+            />
+          </div>
+
           {/* Custom Logo Upload */}
           <div className="border border-slate-800 bg-slate-950 p-3 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">

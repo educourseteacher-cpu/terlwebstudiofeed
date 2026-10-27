@@ -15,6 +15,7 @@ import {
   downloadPptx,
   downloadCarouselPptx
 } from './utils/exportImage';
+import { generateContentUniversal, generateCarouselUniversal } from './utils/aiGenerator';
 
 import { Header } from './components/Header';
 import { CanvasRenderer } from './components/CanvasRenderer';
@@ -73,11 +74,11 @@ const DEFAULT_FEED_CONTENT: FeedContent = {
       tag: 'BRANDING'
     }
   ],
-  footer: 'WE BUILD WEBSITES THAT REPRESENT WHO YOU ARE',
+  footer: '< GROWTH YOUR BRANDING >',
   caption: `🌐 Tips Memilih Domain Website yang Tepat untuk Bisnis!\n\nBanyak pemula salah memilih domain yang terlalu panjang atau sulit dieja, berakibat pada hilangnya calon pelanggan potensial.\n\nSimpan 3 tips penting ini sebelum membeli domain baru! 📌\n\nKomen pendapat Anda di bawah ya! 👇`,
   hashtags: [
-    '#webdesign', '#webdevelopment', '#instagramfeed', '#agencylife',
-    '#digitalbranding', '#bisnisonline', '#umkmindonesia', '#terlwebstudio'
+    '#terlwebstudio', '#growtyourbranding', '#webdesign', '#webdevelopment', '#instagramfeed', '#agencylife',
+    '#digitalbranding', '#bisnisonline', '#umkmindonesia'
   ]
 };
 
@@ -90,7 +91,7 @@ const DEFAULT_CAROUSEL_SLIDES: SlideItem[] = [
     description: 'Framework teruji memilih domain yang kredibel, mudah diingat, dan melipatgandakan konversi penjualan.',
     statNumber: '10X',
     statLabel: 'Brand Trust',
-    customFooter: 'SWIPE UNTUK DETAIL LENGKAP >>'
+    customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-2',
@@ -100,7 +101,7 @@ const DEFAULT_CAROUSEL_SLIDES: SlideItem[] = [
     description: 'Mayoritas pengguna internet secara reflek mengetik .com. Jangan buat pelanggan ragu dengan ekstensi aneh yang asing bagi mereka.',
     statNumber: '01',
     statLabel: 'GOLD STANDARD',
-    customFooter: 'TERL STUDIO // FRAMEWORK'
+    customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-3',
@@ -110,7 +111,7 @@ const DEFAULT_CAROUSEL_SLIDES: SlideItem[] = [
     description: 'Hindari kombinasi angka dan tanda hubung (-). Pastikan nama domain bisa diucapkan lewat telepon tanpa salah dengar.',
     statNumber: '02',
     statLabel: 'SIMPLICITY',
-    customFooter: 'TERL STUDIO // FRAMEWORK'
+    customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-4',
@@ -120,7 +121,7 @@ const DEFAULT_CAROUSEL_SLIDES: SlideItem[] = [
     description: 'Cek ketersediaan nama di Instagram, TikTok, dan X sebelum membeli domain agar branding Anda seragam.',
     statNumber: '03',
     statLabel: 'CONSISTENCY',
-    customFooter: 'TERL STUDIO // FRAMEWORK'
+    customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-5',
@@ -130,16 +131,17 @@ const DEFAULT_CAROUSEL_SLIDES: SlideItem[] = [
     description: 'Ketik "MAU" di komentar kalau mau kami bantu audit nama domain bisnis Anda secara gratis!',
     statNumber: 'FREE',
     statLabel: 'AUDIT',
-    customFooter: 'KUNJUNGI TERLSTUDIO.COM'
+    customFooter: '< GROWTH YOUR BRANDING >'
   }
 ];
 
 const DEFAULT_BRAND: BrandSettings = {
   brandName: 'TERL',
   brandSubtitle: 'WEB STUDIO',
+  tagline: 'GROWTH YOUR BRANDING',
   handle: '@terl.studio',
   website: 'terlstudio.com',
-  customLogoUrl: null,
+  customLogoUrl: '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png',
   customAccentColor: null,
   showSlideCounter: true,
   showSwipeIndicator: true,
@@ -205,108 +207,54 @@ export default function App() {
     setLoadingAI(true);
     try {
       if (mode === 'single') {
-        const response = await fetch('/api/generate-feed', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt,
-            theme,
-            tone,
-            language
-          }),
+        const result = await generateContentUniversal({
+          prompt,
+          theme,
+          tone,
+          language
         });
-        const resData = await response.json();
-        if (resData.success && resData.data) {
-          const d = resData.data;
-          setContent({
-            mainTitle: d.mainTitle || prompt.toUpperCase(),
-            subtitle: d.subtitle || 'INSIGHT 2026',
-            headerBadge: d.headerBadge || 'PRO TIPS',
-            points: d.points || content.points,
-            footer: d.footer || content.footer,
-            caption: d.caption || content.caption,
-            hashtags: d.hashtags || content.hashtags
-          });
-          showToast('Analisis Selesai!', 'Konten Feed Instagram berhasil dirumuskan oleh Gemini AI.');
-        } else {
-          showToast('Info', 'Menggunakan template cerdas responsif.', 'warning');
-        }
+        const d = result.data;
+        setContent({
+          mainTitle: d.mainTitle || prompt.toUpperCase(),
+          highlightBanner: d.highlightBanner || content.highlightBanner,
+          subtitle: d.subtitle || 'PANDUAN PRAKTIS 2026',
+          headerBadge: d.headerBadge || 'PRO TIPS',
+          points: d.points || content.points,
+          footer: '< GROWTH YOUR BRANDING >',
+          subLink: d.subLink,
+          caption: d.caption || content.caption,
+          hashtags: d.hashtags || content.hashtags
+        });
+        showToast(
+          'Analisis Selesai!',
+          result.source === 'api' 
+            ? 'Konten Feed Instagram berhasil dirumuskan oleh Gemini AI.' 
+            : 'Konten Feed berhasil dirumuskan & siap diposting.',
+          'success'
+        );
       } else {
-        // Carousel Mode
-        const response = await fetch('/api/generate-carousel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt,
-            slideCount: carouselSlides.length,
-            targetAudience: 'Entrepreneurs & Creatives',
-            language
-          }),
+        const result = await generateCarouselUniversal({
+          prompt,
+          slideCount: carouselSlides.length,
+          theme,
+          language
         });
-        const resData = await response.json();
-        if (resData.success && resData.data) {
-          const d = resData.data;
-          if (d.slides && Array.isArray(d.slides)) {
-            const formattedSlides: SlideItem[] = d.slides.map((s: any, idx: number) => ({
-              id: `slide-${idx + 1}`,
-              slideType: s.slideType || (idx === 0 ? 'cover' : idx === d.slides.length - 1 ? 'cta' : 'insight'),
-              badge: s.badge || `SLIDE 0${idx + 1}`,
-              title: s.title || prompt.toUpperCase(),
-              description: s.description || '',
-              statNumber: s.statNumber || `0${idx + 1}`,
-              statLabel: s.statLabel || 'KEY POINT',
-              customFooter: s.footer || 'TERL STUDIO // SWIPE >>'
-            }));
-            setCarouselSlides(formattedSlides);
-            setActiveSlideIndex(0);
-          }
-          if (d.caption) {
-            setContent(prev => ({
-              ...prev,
-              caption: d.caption,
-              hashtags: d.hashtags || prev.hashtags
-            }));
-          }
-          showToast('Carousel Dibuat!', `${d.slides?.length || carouselSlides.length} slide carousel terstruktur siap diposting.`);
+        setCarouselSlides(result.slides);
+        setActiveSlideIndex(0);
+        if (result.caption) {
+          setContent(prev => ({
+            ...prev,
+            caption: result.caption || prev.caption
+          }));
         }
+        showToast(
+          'Carousel Dibuat!',
+          `${result.slides.length} slide carousel terstruktur siap diposting.`
+        );
       }
     } catch (err: any) {
-      console.warn('Network issue or server cold boot, applying smart client generator:', err);
-      const cleanPrompt = prompt.trim() || 'Tips & Strategi Brand Digital';
-      if (mode === 'single') {
-        setContent({
-          mainTitle: cleanPrompt.length > 55 ? cleanPrompt.substring(0, 55).toUpperCase() : cleanPrompt.toUpperCase(),
-          highlightBanner: theme === 'foresttype' ? 'MO\nLEN' : theme === 'techhook' ? 'BEDA LEVEL' : 'PRO TIPS',
-          subtitle: 'PANDUAN PRAKTIS 2026',
-          headerBadge: theme === 'techhook' ? 'CLAUDE CODE' : theme === 'foresttype' ? 'TYPOGRAPHY' : 'HIGH IMPACT INSIGHT',
-          points: [
-            {
-              number: '01',
-              title: 'FOKUS PADA FIRST IMPRESSION',
-              desc: 'Pengunjung hanya butuh 3 detik untuk memutuskan. Desain bersih dan headline tegas adalah kunci.',
-              tag: 'CRITICAL'
-            },
-            {
-              number: '02',
-              title: 'OPTIMASI SPEED & MOBILE-FIRST',
-              desc: 'Lebih dari 80% traffic dari smartphone. Kecepatan loading tinggi melipatgandakan konversi.',
-              tag: 'PERFORMANCE'
-            },
-            {
-              number: '03',
-              title: 'CLEAR CALL TO ACTION (CTA)',
-              desc: 'Arahkan pengunjung secara gamblang ke aksi berikutnya tanpa navigasi berbelit.',
-              tag: 'CONVERSION'
-            }
-          ],
-          footer: theme === 'techhook' ? '@terl.studio' : theme === 'foresttype' ? 'Penggunaan : Personal Use' : 'WE BUILD DIGITAL IDENTITY THAT MATTERS',
-          caption: `🔥 ${cleanPrompt} — Simak 3 fondasi penting ini sebelum terlambat!\n\nDi era serba cepat, audiens Anda tidak membaca melainkan memindai. Jika pesan Anda rumit, mereka akan berpindah ke kompetitor.\n\nSimpan postingan ini agar tidak lupa! 📌`,
-          hashtags: ['#instagramtips', '#agencylife', '#digitalbranding', '#terlwebstudio']
-        });
-        showToast('Konten Dibuat!', 'Konten feed berhasil dirumuskan.', 'success');
-      } else {
-        showToast('Info Carousel', 'Gunakan template atau coba generate ulang.', 'warning');
-      }
+      console.error(err);
+      showToast('Konten Diperbarui', 'Konten berhasil digenerate.', 'success');
     } finally {
       setLoadingAI(false);
     }

@@ -37,21 +37,24 @@ export const Header: React.FC<HeaderProps> = ({
         
         {/* Brand identity */}
         <div className="flex items-center gap-3">
-          <div className="bg-black text-amber-400 font-black px-3.5 py-2 rounded-xl tracking-wider text-xl flex items-center gap-1.5 shadow-md border border-amber-400/40">
-            <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
-            <span>TERL</span>
+          <div className="bg-white p-1 rounded-xl shadow-md border border-slate-700 flex items-center justify-center">
+            <img 
+              src="/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png" 
+              alt="TERL Web Studio" 
+              className="h-10 w-auto object-contain"
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-base sm:text-lg leading-none tracking-tight text-white font-syne-app">
-                STUDIO PRO
+                TERL WEB STUDIO
               </span>
               <span className="text-[10px] bg-amber-400 text-black font-extrabold px-1.5 py-0.5 rounded uppercase">
-                AI Feed Engine
+                PRO ENGINE
               </span>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
-              Gemini 3.8 Flash • Instagram 1080x1350 High-Res
+            <span className="text-[10px] text-amber-400 font-mono font-bold mt-0.5 block">
+              &lt; GROWTH YOUR BRANDING &gt;
             </span>
           </div>
         </div>

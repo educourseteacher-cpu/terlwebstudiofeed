@@ -105,38 +105,38 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
       )}
 
       {/* ========================================================
-          TOP HEADER / BRAND BAR
+          TOP HEADER / BRAND BAR (OFFICIAL TERL WEB STUDIO)
       ======================================================== */}
       <div className="relative z-10 flex items-center justify-between shrink-0">
-        
-        {/* Style Variant: Forest Type (Molen) Center / Minimal Header */}
-        {theme === 'foresttype' ? (
-          <div className="w-full flex items-center justify-between">
-            <span className="font-serif text-lg font-bold tracking-tight text-[#FDFBF7]">
-              {brand.brandName || content.subtitle || 'Molen'}
-            </span>
-            <div className="bg-black/30 backdrop-blur-xs text-[#FDFBF7] text-[10px] font-mono font-semibold px-2.5 py-0.5 rounded-full border border-white/10">
-              {isCarousel ? `${slideIndex + 1}/${totalSlides}` : '5/6'}
-            </div>
+        <div className="flex items-center gap-2.5">
+          <div className="h-9 px-1.5 py-0.5 bg-white rounded-xl shadow-xs border border-slate-200/80 flex items-center justify-center shrink-0">
+            <img 
+              src={brand.customLogoUrl || '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png'} 
+              alt="TERL WEB STUDIO" 
+              className="h-7 w-auto object-contain"
+            />
           </div>
-        ) : theme === 'techhook' ? (
-          /* Style Variant: Tech AI Creator (ClassAI Style) */
-          <div className="w-full flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-slate-900 border-2 border-blue-600 flex items-center justify-center text-[10px] font-black text-white">
-                C
-              </div>
-              <span className="text-xs font-black tracking-tight text-slate-900 font-sans-app">
-                {brand.brandName || 'classai'}<span className="text-slate-500">.id</span>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className={`text-[11px] font-black tracking-wider block uppercase leading-none ${theme === 'foresttype' ? 'text-[#FDFBF7]' : 'opacity-90'}`}>
+                {brand.brandName || 'TERL'} {brand.brandSubtitle || 'WEB STUDIO'}
               </span>
             </div>
+            <span className="text-[8px] text-amber-500 font-extrabold tracking-wider block mt-0.5 font-mono">
+              &lt; {brand.tagline || 'GROWTH YOUR BRANDING'} &gt;
+            </span>
+          </div>
+        </div>
 
-            {/* Black Pill Badge */}
-            <div className="bg-black text-white text-[10px] font-mono font-black tracking-widest px-3 py-1 rounded-full uppercase">
-              {isCarousel ? currentSlide.badge : (content.headerBadge || 'CLAUDE CODE')}
-            </div>
+        {/* Right Badge / Counter */}
+        <div className="flex items-center gap-2">
+          {brand.showBadge && (
+            <span className={config.badgeClass}>
+              {isCarousel ? currentSlide?.badge : (content.headerBadge || 'PRO INSIGHT')}
+            </span>
+          )}
 
-            {/* Dual Pill Counter */}
+          {theme === 'techhook' ? (
             <div className="flex items-center gap-1 text-[10px] font-mono">
               <span className="px-2 py-0.5 rounded-full border border-slate-300 text-slate-600 font-bold bg-white/70">
                 0{slideIndex + 1}
@@ -145,55 +145,12 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                 {isCarousel ? `${slideIndex + 1}/${totalSlides}` : '1/10'}
               </span>
             </div>
-          </div>
-        ) : (
-          /* Standard Header for all other themes */
-          <>
-            <div className="flex items-center gap-2.5">
-              {brand.customLogoUrl ? (
-                <img 
-                  src={brand.customLogoUrl} 
-                  alt="Brand Logo" 
-                  className="w-9 h-9 object-contain rounded-lg border border-black/20"
-                />
-              ) : (
-                <div 
-                  className={`px-3 py-1.5 text-xs tracking-wider flex items-center gap-1.5 ${config.logoBgClass}`}
-                  style={{
-                    backgroundColor: brand.customAccentColor ? brand.customAccentColor : undefined,
-                    color: brand.customAccentColor ? '#000000' : undefined
-                  }}
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{brand.brandName || 'TERL'}</span>
-                </div>
-              )}
-              <div>
-                <span className="text-[10px] font-black tracking-widest block uppercase opacity-80">
-                  {brand.brandSubtitle || 'WEB STUDIO'}
-                </span>
-                <span className="text-[9px] opacity-60 tracking-tight block">
-                  {brand.handle || '@terl.studio'}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {brand.showBadge && (
-                <span className={config.badgeClass}>
-                  {isCarousel ? currentSlide.badge : (content.headerBadge || 'PRO INSIGHT')}
-                </span>
-              )}
-
-              {isCarousel && brand.showSlideCounter && totalSlides > 1 && (
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-70">
-                  {slideIndex + 1}/{totalSlides}
-                </span>
-              )}
-            </div>
-          </>
-        )}
-
+          ) : isCarousel && brand.showSlideCounter && totalSlides > 1 ? (
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-70">
+              {slideIndex + 1}/{totalSlides}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       {/* ========================================================
