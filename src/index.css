@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-space: 'Space Grotesk', sans-serif;
+    --font-retro: 'Press Start 2P', monospace;
+    --font-cyber: 'Orbitron', sans-serif;
+    --font-syne: 'Syne', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-chunky: 'Fredoka', cursive, sans-serif;
+  }
+}
+
+.font-serif-app {
+  font-family: var(--font-serif);
+}
+
+.font-chunky-app {
+  font-family: var(--font-chunky);
+}
+
+.font-sans-app {
+  font-family: var(--font-sans);
+}
+
+.font-space-app {
+  font-family: var(--font-space);
+}
+
+.font-retro-app {
+  font-family: var(--font-retro);
+}
+
+.font-cyber-app {
+  font-family: var(--font-cyber);
+}
+
+.font-syne-app {
+  font-family: var(--font-syne);
+}
+
+.font-mono-app {
+  font-family: var(--font-mono);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}

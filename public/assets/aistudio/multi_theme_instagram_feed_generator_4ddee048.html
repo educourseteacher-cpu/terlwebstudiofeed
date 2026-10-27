@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERL Web Studio - Pro AI Instagram Feed Generator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Space Grotesk, Plus Jakarta Sans, Press Start 2P, Orbitron -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        space: ['"Space Grotesk"', 'sans-serif'],
+                        retro: ['"Press Start 2P"', 'monospace'],
+                        cyber: ['"Orbitron"', 'sans-serif'],
+                    },
+                    colors: {
+                        brandYellow: '#FFB800',
+                        brandYellowDark: '#E5A600',
+                        cyberCyan: '#00F0FF',
+                        cyberMagenta: '#FF0055',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-950 text-gray-100 min-h-screen flex flex-col antialiased">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-gray-700">
+        <i id="toast-icon" class="text-brandYellow text-xl"></i>
+        <div>
+            <p id="toast-title" class="font-bold text-sm"></p>
+            <p id="toast-msg" class="text-xs text-gray-300"></p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-black text-brandYellow font-black px-3 py-2 rounded-lg tracking-wider text-xl flex items-center gap-1 shadow-md border border-brandYellow/30">
+                    <span>TERL</span>
+                </div>
+                <div>
+                    <span class="font-extrabold text-lg block leading-none tracking-tight text-white">WEB STUDIO</span>
+                    <span class="text-[10px] text-brandYellow font-semibold tracking-widest uppercase">Nano Banana AI Engine</span>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center gap-2">
+                <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 font-mono">Model: Gemini 3.1 Flash / Nano Banana</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Controls Column -->
+        <div class="lg:col-span-5 bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 p-6 flex flex-col gap-5">
+            <div>
+                <h1 class="text-lg font-extrabold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-brandYellow"></i> 1-Prompt AI Generator
+                </h1>
+                <p class="text-xs text-slate-400 mt-1">Ketik satu topik, biarkan AI menganalisis dan merancang feed Instagram secara otomatis.</p>
+            </div>
+
+            <!-- Theme Selector -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Pilih Tema Visual</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button type="button" onclick="setTheme('brutalism')" id="themeBtn-brutalism" class="py-2 px-2 text-xs font-bold rounded-xl border transition-all border-brandYellow bg-brandYellow text-black">Brutalism</button>
+                    <button type="button" onclick="setTheme('arcade')" id="themeBtn-arcade" class="py-2 px-2 text-xs font-bold rounded-xl border transition-all border-slate-700 bg-slate-800 text-slate-300">Retro Arcade</button>
+                    <button type="button" onclick="setTheme('minimalist')" id="themeBtn-minimalist" class="py-2 px-2 text-xs font-bold rounded-xl border transition-all border-slate-700 bg-slate-800 text-slate-300">Apple Minimal</button>
+                    <button type="button" onclick="setTheme('cyberpunk')" id="themeBtn-cyberpunk" class="py-2 px-2 text-xs font-bold rounded-xl border transition-all border-slate-700 bg-slate-800 text-slate-300">Cyberpunk</button>
+                    <button type="button" onclick="setTheme('trivia')" id="themeBtn-trivia" class="py-2 px-2 text-xs font-bold rounded-xl border transition-all border-slate-700 bg-slate-800 text-slate-300">Quiz / Trivia</button>
+                    <button type="button" onclick="setTheme('checklist')" id="themeBtn-checklist" class="py-2 px-2 text-xs font-bold rounded-xl border transition-all border-slate-700 bg-slate-800 text-slate-300">Step Checklist</button>
+                </div>
+            </div>
+
+            <!-- API Key Input -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-400 flex justify-between">
+                    <span>Gemini API Key</span>
+                    <span class="text-[10px] text-slate-500">Opsional</span>
+                </label>
+                <input type="password" id="apiKey" placeholder="Kosongkan jika menggunakan sistem default..." class="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brandYellow">
+            </div>
+
+            <!-- Single Prompt Input -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold uppercase tracking-wider text-brandYellow flex items-center gap-1.5">
+                    <i class="fa-solid fa-terminal"></i> Single Prompt Analisis AI
+                </label>
+                <textarea id="singlePromptInput" rows="3" placeholder="Contoh: 3 kesalahan fatal UMKM saat membuat website company profile" class="w-full text-sm px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brandYellow font-medium">Tips memilih domain website yang tepat untuk meningkatkan kepercayaan brand bisnis</textarea>
+            </div>
+
+            <!-- AI Analyze & Generate Button -->
+            <button id="generateBtn" onclick="analyzeAndGenerate()" class="w-full bg-brandYellow hover:bg-brandYellowDark text-black font-extrabold py-3.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all transform active:scale-[0.98]">
+                <i class="fa-solid fa-brain"></i> Analisis & Buat Feed Otomatis
+            </button>
+
+            <hr class="border-slate-800">
+
+            <!-- Manual Editor Accordion / Inputs -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300">Kustomisasi Teks Hasil Analisis</h2>
+                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Live Update</span>
+                </div>
+
+                <div class="space-y-2">
+                    <input type="text" id="mainTitleInput" oninput="updatePreview()" placeholder="Judul Utama" class="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold">
+                </div>
+
+                <div class="grid grid-cols-1 gap-2">
+                    <div class="p-2.5 bg-slate-950 rounded-lg border border-slate-800 flex flex-col gap-1.5">
+                        <input type="text" id="p1_title" oninput="updatePreview()" placeholder="Poin 1 Judul" class="text-xs font-bold px-2 py-1 bg-slate-900 border border-slate-700 rounded text-white">
+                        <input type="text" id="p1_desc" oninput="updatePreview()" placeholder="Poin 1 Deskripsi" class="text-xs px-2 py-1 bg-slate-900 border border-slate-700 rounded text-slate-300">
+                    </div>
+                    <div class="p-2.5 bg-slate-950 rounded-lg border border-slate-800 flex flex-col gap-1.5">
+                        <input type="text" id="p2_title" oninput="updatePreview()" placeholder="Poin 2 Judul" class="text-xs font-bold px-2 py-1 bg-slate-900 border border-slate-700 rounded text-white">
+                        <input type="text" id="p2_desc" oninput="updatePreview()" placeholder="Poin 2 Deskripsi" class="text-xs px-2 py-1 bg-slate-900 border border-slate-700 rounded text-slate-300">
+                    </div>
+                    <div class="p-2.5 bg-slate-950 rounded-lg border border-slate-800 flex flex-col gap-1.5">
+                        <input type="text" id="p3_title" oninput="updatePreview()" placeholder="Poin 3 Judul" class="text-xs font-bold px-2 py-1 bg-slate-900 border border-slate-700 rounded text-white">
+                        <input type="text" id="p3_desc" oninput="updatePreview()" placeholder="Poin 3 Deskripsi" class="text-xs px-2 py-1 bg-slate-900 border border-slate-700 rounded text-slate-300">
+                    </div>
+                </div>
+
+                <input type="text" id="footerInput" oninput="updatePreview()" placeholder="Footer Tagline" class="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white font-bold">
+            </div>
+
+            <!-- Download Button -->
+            <button onclick="downloadFeed()" class="w-full bg-white hover:bg-slate-200 text-black font-extrabold py-3.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all transform active:scale-[0.98]">
+                <i class="fa-solid fa-download"></i> Download High-Res PNG (1080x1350)
+            </button>
+        </div>
+
+        <!-- Preview Column -->
+        <div class="lg:col-span-7 flex flex-col items-center justify-center sticky top-28">
+            <div class="w-full flex justify-between items-center mb-3 px-1">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Live Render Preview</span>
+                </div>
+                <span class="text-xs text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800 font-mono">1080 x 1350 px (4:5)</span>
+            </div>
+
+            <!-- Feed Render Area Wrapper -->
+            <div class="w-full flex items-center justify-center overflow-auto p-2">
+                <div id="captureArea" class="w-[540px] aspect-[4/5] bg-white text-gray-900 relative flex flex-col justify-between p-8 shadow-2xl border-4 border-black transition-all duration-300 select-none overflow-hidden">
+                    
+                    <!-- TOP BRAND LOGO -->
+                    <div class="flex flex-col items-center pt-2">
+                        <div id="logoBox" class="bg-black text-brandYellow font-black px-4 py-2 rounded-xl text-lg flex items-center gap-1 shadow-md border border-gray-800">
+                            <span>TERL</span>
+                        </div>
+                        <span id="logoSub" class="text-[9px] text-gray-500 font-bold tracking-[4px] mt-1 uppercase">WEB STUDIO</span>
+                    </div>
+
+                    <!-- MAIN TITLE CONTAINER -->
+                    <div id="mainTitleContainer" class="my-auto py-4">
+                        <div id="specialHeaderBadge" class="hidden flex items-center justify-between mb-3 bg-brandYellow text-black px-3 py-1 rounded font-mono text-[10px] border-2 border-black font-bold">
+                            <span>STATUS: ACTIVE QUIZ</span>
+                            <span>SCORE: 100</span>
+                        </div>
+                        <h2 id="previewTitle" class="text-2xl sm:text-3xl font-extrabold text-center tracking-tight leading-snug text-black">
+                            TIPS MEMILIH DOMAIN WEBSITE YANG TEPAT UNTUK BISNIS
+                        </h2>
+                    </div>
+
+                    <!-- THREE CARDS CONTAINER -->
+                    <div id="cardsWrapper" class="space-y-3 mb-4">
+                        <!-- Card 1 -->
+                        <div id="card1" class="p-3.5 bg-white border-3 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3 transition-all">
+                            <div id="iconBox1" class="w-8 h-8 rounded-lg bg-brandYellow text-black font-extrabold text-sm flex items-center justify-center shrink-0 border-2 border-black">1</div>
+                            <div>
+                                <h3 id="prev_p1_title" class="font-extrabold text-sm text-black uppercase">GUNAKAN EKSTENSI .COM</h3>
+                                <p id="prev_p1_desc" class="text-xs text-gray-600 mt-0.5">Lebih dipercaya dan mudah diingat audiens global.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div id="card2" class="p-3.5 bg-white border-3 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3 transition-all">
+                            <div id="iconBox2" class="w-8 h-8 rounded-lg bg-brandYellow text-black font-extrabold text-sm flex items-center justify-center shrink-0 border-2 border-black">2</div>
+                            <div>
+                                <h3 id="prev_p2_title" class="font-extrabold text-sm text-black uppercase">SINGKAT & MUDAH DIKETIK</h3>
+                                <p id="prev_p2_desc" class="text-xs text-gray-600 mt-0.5">Hindari penggunaan tanda hubung atau ejaan rumit.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div id="card3" class="p-3.5 bg-white border-3 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3 transition-all">
+                            <div id="iconBox3" class="w-8 h-8 rounded-lg bg-brandYellow text-black font-extrabold text-sm flex items-center justify-center shrink-0 border-2 border-black">3</div>
+                            <div>
+                                <h3 id="prev_p3_title" class="font-extrabold text-sm text-black uppercase">SESUAI DENGAN NAMA BRAND</h3>
+                                <p id="prev_p3_desc" class="text-xs text-gray-600 mt-0.5">Membangun identitas digital yang konsisten.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER BRAND BAR -->
+                    <div id="footerBar" class="-mx-8 -mb-8 py-4 bg-brandYellow border-t-3 border-black text-center">
+                        <p id="prevFooter" class="font-black text-xs text-black tracking-wider uppercase">WE BUILD WEBSITES THAT REPRESENT WHO YOU ARE</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <p class="text-center text-xs text-slate-500 mt-4">
+                Pilih tema <strong>Cyberpunk</strong>, <strong>Quiz / Trivia</strong>, atau <strong>Step Checklist</strong> untuk variasi konten feed agensi Anda.
+            </p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 TERL Web Studio. All rights reserved. Powered by Gemini Nano Banana Engine.</p>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        let currentTheme = 'brutalism';
+
+        const defaultContent = {
+            title: "TIPS MEMILIH DOMAIN WEBSITE YANG TEPAT UNTUK BISNIS",
+            p1_title: "GUNAKAN EKSTENSI .COM",
+            p1_desc: "Lebih dipercaya dan mudah diingat audiens global.",
+            p2_title: "SINGKAT & MUDAH DIKETIK",
+            p2_desc: "Hindari penggunaan tanda hubung atau ejaan rumit.",
+            p3_title: "SESUAI DENGAN NAMA BRAND",
+            p3_desc: "Membangun identitas digital yang konsisten.",
+            footer: "WE BUILD WEBSITES THAT REPRESENT WHO YOU ARE"
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDefaultValues();
+            setTheme('brutalism');
+        });
+
+        function loadDefaultValues() {
+            document.getElementById('mainTitleInput').value = defaultContent.title;
+            document.getElementById('p1_title').value = defaultContent.p1_title;
+            document.getElementById('p1_desc').value = defaultContent.p1_desc;
+            document.getElementById('p2_title').value = defaultContent.p2_title;
+            document.getElementById('p2_desc').value = defaultContent.p2_desc;
+            document.getElementById('p3_title').value = defaultContent.p3_title;
+            document.getElementById('p3_desc').value = defaultContent.p3_desc;
+            document.getElementById('footerInput').value = defaultContent.footer;
+            updatePreview();
+        }
+
+        function showToast(title, msg, iconClass = "fa-circle-check") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = msg;
+            document.getElementById('toast-icon').className = `fa-solid ${iconClass} text-brandYellow text-xl`;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            ['brutalism', 'arcade', 'minimalist', 'cyberpunk', 'trivia', 'checklist'].forEach(t => {
+                const btn = document.getElementById(`themeBtn-${t}`);
+                if (t === theme) {
+                    btn.className = "py-2 px-2 text-xs font-bold rounded-xl border transition-all border-brandYellow bg-brandYellow text-black shadow-md";
+                } else {
+                    btn.className = "py-2 px-2 text-xs font-bold rounded-xl border transition-all border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700";
+                }
+            });
+
+            const captureArea = document.getElementById('captureArea');
+            const logoBox = document.getElementById('logoBox');
+            const specialHeader = document.getElementById('specialHeaderBadge');
+            const previewTitle = document.getElementById('previewTitle');
+            const footerBar = document.getElementById('footerBar');
+
+            if (theme === 'brutalism') {
+                captureArea.className = "w-[540px] aspect-[4/5] bg-white text-gray-900 relative flex flex-col justify-between p-8 shadow-2xl border-4 border-black transition-all duration-300 select-none overflow-hidden font-sans";
+                logoBox.className = "bg-black text-brandYellow font-black px-4 py-2 rounded-xl text-lg flex items-center gap-1 shadow-md border border-gray-800";
+                specialHeader.classList.add('hidden');
+                previewTitle.className = "text-2xl sm:text-3xl font-extrabold text-center tracking-tight leading-snug text-black";
+                footerBar.className = "-mx-8 -mb-8 py-4 bg-brandYellow border-t-3 border-black text-center";
+                applyCardStyles('brutalism');
+            } else if (theme === 'arcade') {
+                captureArea.className = "w-[540px] aspect-[4/5] bg-slate-900 text-brandYellow relative flex flex-col justify-between p-8 shadow-2xl border-4 border-brandYellow transition-all duration-300 select-none overflow-hidden font-retro";
+                logoBox.className = "bg-brandYellow text-black font-black px-4 py-2 rounded-none text-xs flex items-center gap-1 shadow-[4px_4px_0px_0px_#fff] border-2 border-black font-retro";
+                specialHeader.classList.remove('hidden');
+                previewTitle.className = "text-sm sm:text-base font-bold text-center tracking-wide leading-relaxed text-brandYellow font-retro";
+                footerBar.className = "-mx-8 -mb-8 py-3 bg-black border-t-4 border-brandYellow text-center";
+                applyCardStyles('arcade');
+            } else if (theme === 'minimalist') {
+                captureArea.className = "w-[540px] aspect-[4/5] bg-neutral-50 text-neutral-900 relative flex flex-col justify-between p-8 shadow-2xl border border-neutral-300 rounded-3xl transition-all duration-300 select-none overflow-hidden font-sans";
+                logoBox.className = "bg-neutral-900 text-white font-medium px-4 py-1.5 rounded-full text-xs tracking-widest shadow-sm";
+                specialHeader.classList.add('hidden');
+                previewTitle.className = "text-xl sm:text-2xl font-semibold text-center tracking-tight text-neutral-900";
+                footerBar.className = "-mx-8 -mb-8 py-4 bg-neutral-900 text-white text-center rounded-b-3xl";
+                applyCardStyles('minimalist');
+            } else if (theme === 'cyberpunk') {
+                captureArea.className = "w-[540px] aspect-[4/5] bg-slate-950 text-cyan-400 relative flex flex-col justify-between p-8 shadow-2xl border-4 border-cyan-400 transition-all duration-300 select-none overflow-hidden font-cyber";
+                logoBox.className = "bg-cyan-400 text-black font-black px-4 py-2 rounded-none text-xs flex items-center gap-1 shadow-[4px_4px_0px_0px_#FF0055] border-2 border-black font-cyber uppercase";
+                specialHeader.classList.add('hidden');
+                previewTitle.className = "text-lg sm:text-xl font-black text-center tracking-wider text-white uppercase drop-shadow-[0_0_10px_rgba(0,240,255,0.7)] font-cyber";
+                footerBar.className = "-mx-8 -mb-8 py-4 bg-gradient-to-r from-cyan-500 to-pink-500 text-black border-t-2 border-white text-center font-bold";
+                applyCardStyles('cyberpunk');
+            } else if (theme === 'trivia') {
+                captureArea.className = "w-[540px] aspect-[4/5] bg-indigo-950 text-white relative flex flex-col justify-between p-8 shadow-2xl border-4 border-indigo-500 transition-all duration-300 select-none overflow-hidden font-space";
+                logoBox.className = "bg-indigo-600 text-white font-black px-4 py-2 rounded-xl text-sm flex items-center gap-1 shadow-md border border-indigo-400";
+                specialHeader.classList.remove('hidden');
+                previewTitle.className = "text-xl sm:text-2xl font-bold text-center tracking-tight text-yellow-300";
+                footerBar.className = "-mx-8 -mb-8 py-4 bg-indigo-900 border-t-2 border-indigo-700 text-center";
+                applyCardStyles('trivia');
+            } else if (theme === 'checklist') {
+                captureArea.className = "w-[540px] aspect-[4/5] bg-emerald-950 text-white relative flex flex-col justify-between p-8 shadow-2xl border-4 border-emerald-500 transition-all duration-300 select-none overflow-hidden font-sans";
+                logoBox.className = "bg-emerald-600 text-white font-black px-4 py-2 rounded-xl text-sm flex items-center gap-1 shadow-md border border-emerald-400";
+                specialHeader.classList.add('hidden');
+                previewTitle.className = "text-xl sm:text-2xl font-extrabold text-center tracking-tight text-emerald-200";
+                footerBar.className = "-mx-8 -mb-8 py-4 bg-emerald-900 border-t-2 border-emerald-700 text-center";
+                applyCardStyles('checklist');
+            }
+            updatePreview();
+        }
+
+        function applyCardStyles(theme) {
+            for (let i = 1; i <= 3; i++) {
+                const card = document.getElementById(`card${i}`);
+                const iconBox = document.getElementById(`iconBox${i}`);
+                const title = document.getElementById(`prev_p${i}_title`);
+                const desc = document.getElementById(`prev_p${i}_desc`);
+
+                if (theme === 'brutalism') {
+                    card.className = "p-3.5 bg-white border-3 border-black rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3";
+                    iconBox.className = "w-8 h-8 rounded-lg bg-brandYellow text-black font-extrabold text-sm flex items-center justify-center shrink-0 border-2 border-black";
+                    title.className = "font-extrabold text-sm text-black uppercase";
+                    desc.className = "text-xs text-gray-600 mt-0.5";
+                } else if (theme === 'arcade') {
+                    card.className = "p-3 bg-slate-800 border-2 border-brandYellow rounded-none shadow-[4px_4px_0px_0px_#FFB800] flex items-start gap-3 font-retro";
+                    iconBox.className = "w-6 h-6 rounded-none bg-brandYellow text-black font-bold text-xs flex items-center justify-center shrink-0 border border-black font-retro";
+                    title.className = "font-bold text-[11px] text-white uppercase font-retro leading-tight";
+                    desc.className = "text-[9px] text-gray-300 mt-1 font-retro leading-normal";
+                } else if (theme === 'minimalist') {
+                    card.className = "p-4 bg-white border border-neutral-200 rounded-2xl shadow-sm flex items-start gap-3";
+                    iconBox.className = "w-7 h-7 rounded-full bg-neutral-900 text-white font-semibold text-xs flex items-center justify-center shrink-0";
+                    title.className = "font-bold text-xs text-neutral-900";
+                    desc.className = "text-xs text-neutral-500 mt-0.5";
+                } else if (theme === 'cyberpunk') {
+                    card.className = "p-3.5 bg-slate-900 border-2 border-cyan-400 rounded-none shadow-[4px_4px_0px_0px_#FF0055] flex items-start gap-3 font-cyber";
+                    iconBox.className = "w-7 h-7 rounded-none bg-pink-600 text-white font-bold text-xs flex items-center justify-center shrink-0 border border-cyan-400";
+                    title.className = "font-bold text-xs text-cyan-300 uppercase";
+                    desc.className = "text-[10px] text-slate-400 mt-0.5";
+                } else if (theme === 'trivia') {
+                    card.className = "p-3.5 bg-indigo-900 border-2 border-indigo-400 rounded-xl shadow-md flex items-start gap-3";
+                    iconBox.className = "w-8 h-8 rounded-lg bg-yellow-400 text-black font-bold text-sm flex items-center justify-center shrink-0";
+                    title.className = "font-bold text-sm text-yellow-200 uppercase";
+                    desc.className = "text-xs text-indigo-200 mt-0.5";
+                } else if (theme === 'checklist') {
+                    card.className = "p-3.5 bg-emerald-900 border-2 border-emerald-500 rounded-xl shadow-md flex items-start gap-3";
+                    iconBox.className = "w-8 h-8 rounded-lg bg-emerald-400 text-black font-bold text-sm flex items-center justify-center shrink-0";
+                    title.className = "font-bold text-sm text-emerald-100 uppercase";
+                    desc.className = "text-xs text-emerald-300 mt-0.5";
+                }
+            }
+        }
+
+        function updatePreview() {
+            document.getElementById('previewTitle').innerText = document.getElementById('mainTitleInput').value;
+            document.getElementById('prev_p1_title').innerText = document.getElementById('p1_title').value;
+            document.getElementById('prev_p1_desc').innerText = document.getElementById('p1_desc').value;
+            document.getElementById('prev_p2_title').innerText = document.getElementById('p2_title').value;
+            document.getElementById('prev_p2_desc').innerText = document.getElementById('p2_desc').value;
+            document.getElementById('prev_p3_title').innerText = document.getElementById('p3_title').value;
+            document.getElementById('prev_p3_desc').innerText = document.getElementById('p3_desc').value;
+            document.getElementById('prevFooter').innerText = document.getElementById('footerInput').value;
+        }
+
+        async function analyzeAndGenerate() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const promptText = document.getElementById('singlePromptInput').value.trim();
+            const btn = document.getElementById('generateBtn');
+
+            if (!promptText) {
+                showToast("Peringatan", "Masukkan satu prompt atau topik terlebih dahulu!", "fa-triangle-exclamation");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-black"></i> Gemini AI Sedang Menganalisis...`;
+
+            const systemPrompt = `Anda adalah AI generator konten profesional untuk Instagram TERL Web Studio. 
+            Analisis prompt berikut dan buatkan struktur teks feed dalam format JSON valid tanpa markdown tambahan dengan struktur:
+            {
+              "mainTitle": "Judul utama yang tajam dan menarik sesuai topik",
+              "p1_title": "Judul Poin 1",
+              "p1_desc": "Deskripsi singkat poin 1",
+              "p2_title": "Judul Poin 2",
+              "p2_desc": "Deskripsi singkat poin 2",
+              "p3_title": "Judul Poin 3",
+              "p3_desc": "Deskripsi singkat poin 3",
+              "footer": "Tagline footer branding"
+            }`;
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: `Analisis Topik: "${promptText}", Tema: ${currentTheme}` }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            let success = false;
+            let resultData = null;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error("Gagal terhubung ke API");
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (jsonText) {
+                    resultData = JSON.parse(jsonText);
+                    success = true;
+                }
+            } catch (err) {
+                console.warn(err);
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-brain"></i> Analisis & Buat Feed Otomatis`;
+
+            if (success && resultData) {
+                document.getElementById('mainTitleInput').value = resultData.mainTitle || promptText;
+                document.getElementById('p1_title').value = resultData.p1_title || "";
+                document.getElementById('p1_desc').value = resultData.p1_desc || "";
+                document.getElementById('p2_title').value = resultData.p2_title || "";
+                document.getElementById('p2_desc').value = resultData.p2_desc || "";
+                document.getElementById('p3_title').value = resultData.p3_title || "";
+                document.getElementById('p3_desc').value = resultData.p3_desc || "";
+                if (resultData.footer) document.getElementById('footerInput').value = resultData.footer;
+
+                updatePreview();
+                showToast("Analisis Selesai!", "Feed berhasil digenerate otomatis berdasarkan prompt Anda.", "fa-wand-magic-sparkles");
+            } else {
+                showToast("Gagal Terhubung", "Periksa API Key Anda atau coba beberapa saat lagi.", "fa-circle-xmark");
+            }
+        }
+
+        async function downloadFeed() {
+            const captureArea = document.getElementById('captureArea');
+            showToast("Memproses...", "Merender gambar resolusi tinggi (1080x1350)...", "fa-spinner fa-spin");
+
+            try {
+                const canvas = await html2canvas(captureArea, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null
+                });
+
+                const link = document.createElement('a');
+                link.download = `TERL-Feed-${currentTheme}-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+                showToast("Berhasil Diunduh", "Gambar feed Instagram siap diposting!", "fa-circle-down");
+            } catch (err) {
+                console.error(err);
+                showToast("Gagal", "Terjadi kesalahan saat merender gambar.", "fa-circle-xmark");
+            }
+        }
+    </script>
+</body>
+</html>
+```
+eof
+
+### Kesimpulan & Fitur Baru yang Dihasilkan:
+1. **1-Prompt AI Analysis (Nano Banana / Gemini Flash Style)**: Anda cukup mengetikkan satu kalimat ide/topik di kolom prompt, dan AI secara cerdas menganalisis serta merumuskan headline, 3 poin terstruktur, hingga footer.
+2. **6 Tema Visual Profesional**: Termasuk **Clean Brutalism**, **Retro Arcade Game**, **Apple Minimalist**, **Cyberpunk Neon**, **Quiz/Trivia Game**, dan **Step Checklist**.
+3. **Typography & Styling**: Menggunakan font khusus seperti *Orbitron*, *Space Grotesk*, dan *Press Start 2P* yang otomatis menyesuaikan dengan tema pilihan Anda.
+4. **Export High-Res PNG**: Menggunakan `html2canvas` beresolusi 2x untuk memastikan hasil cetak grafis berukuran 1080x1350 px sangat tajam saat di-upload ke Instagram.

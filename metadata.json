@@ -1,0 +1,6 @@
+{
+  "name": "TERL Studio - Pro AI Instagram Feed & Carousel Generator",
+  "description": "Generator konten dan visual feed/carousel Instagram bertenaga Gemini AI dengan multi-tema visual, live Instagram mockup preview, dan export high-resolution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
