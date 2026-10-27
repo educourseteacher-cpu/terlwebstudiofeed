@@ -40,9 +40,9 @@ export const PRESET_TEMPLATES: PresetTemplate[] = [
           tag: 'BRANDING'
         }
       ],
-      footer: 'WE BUILD WEBSITES THAT REPRESENT WHO YOU ARE',
+      footer: '< GROWTH YOUR BRANDING >',
       caption: `🌐 Mau bikin website bisnis tapi bingung nentuin domain?\n\nDomain adalah pintu gerbang reputasi digital bisnis Anda. Domain yang salah pilih bisa membuat calon pembeli ragu bertransaksi!\n\nSimak 3 tips krusial di atas sebelum Anda checkout domain.\n\n📌 Save postingan ini agar tidak lupa!\n💬 Mau konsultasi website gratis? Kirim DM ke @terl.studio sekarang juga!`,
-      hashtags: ['#webdesign', '#domainname', '#webdevelopment', '#bisnisindonesia', '#agencylife', '#brandingstrategi', '#umkmnaikkelas', '#terlwebstudio']
+      hashtags: ['#terlwebstudio', '#growtyourbranding', '#webdesign', '#domainname', '#webdevelopment', '#agencylife', '#brandingstrategi']
     }
   },
   {
@@ -216,10 +216,10 @@ export const PRESET_TEMPLATES: PresetTemplate[] = [
           tag: 'DESIGN'
         }
       ],
-      footer: '@classai_id',
+      footer: '< GROWTH YOUR BRANDING >',
       subLink: 'Geser ❯',
       caption: `⚡ Claude Code sekarang jadi senjata wajib developer modern!\n\nDengan memasang plugin yang tepat, Anda bisa mengubah terminal coding biasa menjadi asisten senior developer yang bisa audit repo, generate test, dan integrasi API tanpa jeda.\n\nSimak 5 rekomendasi plugin terbaik di carousel ini! 📌\n\nKomen "PLUGIN" untuk dapetin link dokumentasi instalasinya! 👇`,
-      hashtags: ['#claudecode', '#anthropic', '#aitools', '#codingtips', '#developerlife', '#softwareengineering', '#artificialintelligence', '#terlstudio']
+      hashtags: ['#terlwebstudio', '#growtyourbranding', '#claudecode', '#anthropic', '#aitools', '#codingtips']
     }
   },
   {

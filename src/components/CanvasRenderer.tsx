@@ -28,6 +28,17 @@ interface CanvasRendererProps {
   containerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
+/**
+ * Strips unwanted raw prompt prefixes like "HEADLINE:", "JUDUL:", or trailing "TAMPILKAN"
+ */
+function cleanHeadline(rawTitle?: string): string {
+  if (!rawTitle) return 'TIPS MEMILIH DOMAIN WEBSITE BISNIS';
+  let cleaned = rawTitle.replace(/^(headline|judul|topik|topic)\s*[:\-]\s*/i, '');
+  cleaned = cleaned.replace(/\s+(tampilkan|buatkan|generate)\s*$/i, '');
+  cleaned = cleaned.replace(/^["'“](.*)["'”]$/, '$1');
+  return cleaned.trim();
+}
+
 export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
   theme,
   aspectRatio,
@@ -107,37 +118,37 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
       {/* ========================================================
           TOP HEADER / BRAND BAR (OFFICIAL TERL WEB STUDIO)
       ======================================================== */}
-      <div className="relative z-10 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="h-9 px-1.5 py-0.5 bg-white rounded-xl shadow-xs border border-slate-200/80 flex items-center justify-center shrink-0">
+      <div className="relative z-10 flex items-center justify-between gap-3 shrink-0 mb-2">
+        <div className="flex items-center gap-2.5 min-w-0">
+          {/* Official TERL Logo Container with clean white backdrop */}
+          <div className="h-10 px-2 py-1 bg-white rounded-xl shadow-xs border border-black/10 flex items-center justify-center shrink-0">
             <img 
               src={brand.customLogoUrl || '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png'} 
               alt="TERL WEB STUDIO" 
-              className="h-7 w-auto object-contain"
+              className="h-8 w-auto object-contain block"
+              crossOrigin="anonymous"
             />
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className={`text-[11px] font-black tracking-wider block uppercase leading-none ${theme === 'foresttype' ? 'text-[#FDFBF7]' : 'opacity-90'}`}>
-                {brand.brandName || 'TERL'} {brand.brandSubtitle || 'WEB STUDIO'}
-              </span>
-            </div>
-            <span className="text-[8px] text-amber-500 font-extrabold tracking-wider block mt-0.5 font-mono">
+          <div className="flex flex-col justify-center min-w-0">
+            <span className={`text-[12px] font-black tracking-tight uppercase leading-snug whitespace-nowrap ${theme === 'foresttype' ? 'text-[#FDFBF7]' : 'opacity-95'}`}>
+              {brand.brandName || 'TERL'} {brand.brandSubtitle || 'STUDIO'}
+            </span>
+            <span className="text-[9px] text-amber-500 font-extrabold tracking-wide font-mono leading-none whitespace-nowrap mt-0.5">
               &lt; {brand.tagline || 'GROWTH YOUR BRANDING'} &gt;
             </span>
           </div>
         </div>
 
         {/* Right Badge / Counter */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {brand.showBadge && (
-            <span className={config.badgeClass}>
+            <span className={`${config.badgeClass} whitespace-nowrap`}>
               {isCarousel ? currentSlide?.badge : (content.headerBadge || 'PRO INSIGHT')}
             </span>
           )}
 
           {theme === 'techhook' ? (
-            <div className="flex items-center gap-1 text-[10px] font-mono">
+            <div className="flex items-center gap-1 text-[10px] font-mono shrink-0">
               <span className="px-2 py-0.5 rounded-full border border-slate-300 text-slate-600 font-bold bg-white/70">
                 0{slideIndex + 1}
               </span>
@@ -146,7 +157,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
               </span>
             </div>
           ) : isCarousel && brand.showSlideCounter && totalSlides > 1 ? (
-            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-70">
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-70 shrink-0">
               {slideIndex + 1}/{totalSlides}
             </span>
           ) : null}
@@ -272,14 +283,14 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
             {(!isCarousel || slideType === 'points') && (
               <div className="flex flex-col justify-between h-full py-1">
                 {/* Title Container */}
-                <div className="text-center mb-3">
+                <div className="text-center mb-3 px-2">
                   {content.subtitle && (
-                    <span className="text-[10px] font-black uppercase tracking-[2px] opacity-70 block mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-70 block mb-1">
                       {content.subtitle}
                     </span>
                   )}
-                  <h2 className={`text-xl sm:text-2xl ${config.titleClass} leading-tight line-clamp-3`}>
-                    {content.mainTitle || 'JUDUL FEED INSTAGRAM'}
+                  <h2 className={`text-xl sm:text-2xl ${config.titleClass} leading-snug break-words font-black tracking-tight`}>
+                    {cleanHeadline(content.mainTitle)}
                   </h2>
                 </div>
 
@@ -288,7 +299,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                   {content.points && content.points.slice(0, 3).map((pt, idx) => (
                     <div 
                       key={idx} 
-                      className={`p-3 flex items-start gap-3 transition-all ${config.cardClass}`}
+                      className={`p-3.5 flex items-start gap-3 transition-all ${config.cardClass}`}
                     >
                       <div 
                         className={`w-7 h-7 shrink-0 text-xs flex items-center justify-center font-black ${config.iconBgClass}`}
@@ -300,17 +311,17 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                         {pt.number || `0${idx + 1}`}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-1">
-                          <h3 className="font-black text-xs uppercase tracking-tight truncate">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-black text-xs uppercase tracking-tight leading-snug break-words">
                             {pt.title}
                           </h3>
                           {pt.tag && (
-                            <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-80 shrink-0">
+                            <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-80 shrink-0 font-bold ml-1">
                               {pt.tag}
                             </span>
                           )}
                         </div>
-                        <p className={`text-[11px] mt-0.5 leading-snug line-clamp-2 ${config.descClass}`}>
+                        <p className={`text-[11px] mt-1 leading-snug ${config.descClass}`}>
                           {pt.desc}
                         </p>
                       </div>
@@ -329,7 +340,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                 </div>
 
                 <h1 className={`text-2xl sm:text-3xl ${config.titleClass} leading-snug mb-4`}>
-                  {currentSlide.title || content.mainTitle}
+                  {cleanHeadline(currentSlide.title || content.mainTitle)}
                 </h1>
 
                 <p className={`text-xs max-w-sm mx-auto leading-relaxed opacity-85 mb-6 ${config.descClass}`}>
@@ -368,7 +379,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                 </div>
 
                 <h2 className={`text-xl sm:text-2xl ${config.titleClass} leading-tight`}>
-                  {currentSlide.title}
+                  {cleanHeadline(currentSlide.title)}
                 </h2>
 
                 <div className={`p-4 rounded-xl ${config.cardClass}`}>
@@ -383,7 +394,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
             {isCarousel && slideType === 'comparison' && (
               <div className="space-y-3 py-2">
                 <h2 className={`text-lg sm:text-xl text-center ${config.titleClass} mb-2`}>
-                  {currentSlide.title || 'APA YANG HARUS DIUBAH?'}
+                  {cleanHeadline(currentSlide.title || 'APA YANG HARUS DIUBAH?')}
                 </h2>
                 
                 <div className="p-3 rounded-xl border border-rose-500/50 bg-rose-500/10 flex items-start gap-2.5">
@@ -411,22 +422,23 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
             {/* 5. CAROUSEL CTA SLIDE */}
             {isCarousel && slideType === 'cta' && (
               <div className="flex flex-col justify-center items-center text-center px-3 py-2">
-                <div 
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 shadow-lg"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  <Bookmark className="w-6 h-6 text-black" />
+                <div className="bg-white p-2 rounded-2xl shadow-md border border-slate-200/90 flex items-center justify-center mb-3">
+                  <img 
+                    src={brand.customLogoUrl || '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png'} 
+                    alt="TERL WEB STUDIO" 
+                    className="h-10 w-auto object-contain"
+                  />
                 </div>
 
                 <h2 className={`text-xl sm:text-2xl ${config.titleClass} leading-tight mb-2`}>
-                  {currentSlide.title || 'SIMPAN UNTUK NANTI!'}
+                  {cleanHeadline(currentSlide.title || 'SIMPAN UNTUK NANTI!')}
                 </h2>
 
-                <p className={`text-xs max-w-xs leading-relaxed opacity-80 mb-5 ${config.descClass}`}>
+                <p className={`text-xs max-w-xs leading-relaxed opacity-80 mb-4 ${config.descClass}`}>
                   {currentSlide.description || 'Jangan biarkan insight ini hilang di feed Anda.'}
                 </p>
 
-                <div className="grid grid-cols-2 gap-2 w-full max-w-xs">
+                <div className="grid grid-cols-2 gap-2 w-full max-w-xs mb-3">
                   <div className="p-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center gap-2 justify-center text-[11px] font-bold">
                     <Bookmark className="w-3.5 h-3.5 text-amber-500" />
                     <span>Simpan Post</span>
@@ -435,6 +447,10 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                     <Share2 className="w-3.5 h-3.5 text-cyan-400" />
                     <span>Bagikan</span>
                   </div>
+                </div>
+
+                <div className="text-[10px] font-mono font-bold text-amber-500">
+                  &lt; {brand.tagline || 'GROWTH YOUR BRANDING'} &gt;
                 </div>
               </div>
             )}
@@ -470,16 +486,16 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
           /* Standard Bottom Footer Bar */
           brand.showFooterBar && (
             <div 
-              className={`-mx-7 -mb-7 py-3 px-4 text-center transition-all ${config.footerBgClass}`}
+              className={`-mx-7 -mb-7 py-3 px-5 text-center transition-all ${config.footerBgClass}`}
               style={{
                 backgroundColor: brand.customAccentColor && theme === 'brutalism' ? brand.customAccentColor : undefined
               }}
             >
-              <div className="flex items-center justify-between px-2">
-                <span className={`text-[10px] line-clamp-1 ${config.footerTextClass}`}>
+              <div className="flex items-center justify-between gap-3 px-1">
+                <span className={`text-[10px] font-black uppercase tracking-wider ${config.footerTextClass} truncate`}>
                   {isCarousel && currentSlide?.customFooter 
                     ? currentSlide.customFooter 
-                    : (content.footer || 'WE BUILD WEBSITES THAT REPRESENT WHO YOU ARE')}
+                    : (content.footer || '< GROWTH YOUR BRANDING >')}
                 </span>
                 {brand.showSwipeIndicator && isCarousel && slideIndex < totalSlides - 1 && (
                   <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider shrink-0 opacity-80">

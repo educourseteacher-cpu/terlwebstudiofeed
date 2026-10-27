@@ -305,8 +305,8 @@ export default function App() {
       await downloadCarouselZip(
         async (index: number) => {
           setActiveSlideIndex(index);
-          // Allow DOM to update
-          await new Promise((r) => setTimeout(r, 120));
+          // Allow DOM to update and settle fonts/reflow
+          await new Promise((r) => setTimeout(r, 180));
           return document.getElementById('capture-canvas-element');
         },
         carouselSlides.length,
@@ -342,7 +342,7 @@ export default function App() {
         await downloadCarouselPptx(
           async (index: number) => {
             setActiveSlideIndex(index);
-            await new Promise((r) => setTimeout(r, 120));
+            await new Promise((r) => setTimeout(r, 180));
             return document.getElementById('capture-canvas-element');
           },
           carouselSlides.length,

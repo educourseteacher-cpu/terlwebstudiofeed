@@ -26,26 +26,90 @@ export function getPptxDimensions(aspectRatio: AspectRatioType) {
   }
 }
 
-export async function exportElementToPng(element: HTMLElement, scale: number = 2.5): Promise<string> {
+/**
+ * Ensures all web fonts, CSS assets, and images are fully decoded
+ * before html-to-image captures the DOM canvas.
+ */
+async function prepareElementForCapture(element: HTMLElement): Promise<void> {
+  // 1. Wait for document fonts to finish loading
+  if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+    try {
+      await document.fonts.ready;
+    } catch (_) {}
+  }
+
+  // 2. Ensure all <img> tags inside element are loaded and decoded
+  const imgs = Array.from(element.querySelectorAll('img'));
+  await Promise.all(
+    imgs.map(async (img) => {
+      if (img.complete && img.naturalWidth > 0) return;
+      return new Promise<void>((resolve) => {
+        img.onload = () => resolve();
+        img.onerror = () => resolve();
+        // Fallback safety timeout
+        setTimeout(resolve, 800);
+      });
+    })
+  );
+
+  // 3. Brief micro-delay to allow browser reflow and antialiasing buffer
+  await new Promise((r) => setTimeout(r, 60));
+}
+
+/**
+ * Computes optimal pixelRatio so output is exactly 1080px wide
+ */
+function getTargetPixelRatio(element: HTMLElement, defaultScale: number = 2.25): number {
+  const currentWidth = element.clientWidth || 480;
+  if (currentWidth > 0) {
+    return 1080 / currentWidth;
+  }
+  return defaultScale;
+}
+
+export async function exportElementToPng(element: HTMLElement, scale?: number): Promise<string> {
+  await prepareElementForCapture(element);
+  const ratio = scale || getTargetPixelRatio(element, 2.25);
+
+  // Warm-up pass: initializes SVG font caches & CSS transforms
+  try {
+    await toPng(element, { pixelRatio: 1, quality: 0.95 });
+  } catch (_) {}
+
+  // Final high-fidelity rasterization pass
   return await toPng(element, {
-    pixelRatio: scale,
-    quality: 0.98,
+    pixelRatio: ratio,
+    quality: 1.0,
     cacheBust: true,
+    style: {
+      transform: 'none',
+    }
   });
 }
 
-export async function exportElementToBlob(element: HTMLElement, scale: number = 2.5): Promise<Blob> {
+export async function exportElementToBlob(element: HTMLElement, scale?: number): Promise<Blob> {
+  await prepareElementForCapture(element);
+  const ratio = scale || getTargetPixelRatio(element, 2.25);
+
+  // Warm-up pass
+  try {
+    await toBlob(element, { pixelRatio: 1, quality: 0.95 });
+  } catch (_) {}
+
   const blob = await toBlob(element, {
-    pixelRatio: scale,
-    quality: 0.98,
+    pixelRatio: ratio,
+    quality: 1.0,
     cacheBust: true,
+    style: {
+      transform: 'none',
+    }
   });
   if (!blob) throw new Error('Failed to create image blob');
   return blob;
 }
 
 export async function downloadPng(element: HTMLElement, filename: string) {
-  const dataUrl = await exportElementToPng(element, 2.5);
+  const dataUrl = await exportElementToPng(element);
   const link = document.createElement('a');
   link.download = filename;
   link.href = dataUrl;
@@ -56,7 +120,7 @@ export async function copyImageToClipboard(element: HTMLElement): Promise<boolea
   if (!navigator.clipboard || !window.ClipboardItem) {
     throw new Error('Clipboard API not supported');
   }
-  const blob = await exportElementToBlob(element, 2.5);
+  const blob = await exportElementToBlob(element);
   await navigator.clipboard.write([
     new ClipboardItem({
       [blob.type]: blob,
@@ -75,7 +139,7 @@ export async function downloadCarouselZip(
   for (let i = 0; i < totalSlides; i++) {
     const el = await renderSlide(i);
     if (el) {
-      const blob = await exportElementToBlob(el, 2.5);
+      const blob = await exportElementToBlob(el);
       const slideNum = String(i + 1).padStart(2, '0');
       zip.file(`${baseFilename}-slide-${slideNum}.png`, blob);
     }
@@ -102,7 +166,7 @@ export async function downloadPptx(
   filename: string,
   aspectRatio: AspectRatioType
 ) {
-  const dataUrl = await exportElementToPng(element, 2.5);
+  const dataUrl = await exportElementToPng(element);
   const dims = getPptxDimensions(aspectRatio);
 
   const pptx = new PptxGenJS();
@@ -148,7 +212,7 @@ export async function downloadCarouselPptx(
   for (let i = 0; i < totalSlides; i++) {
     const el = await renderSlide(i);
     if (el) {
-      const dataUrl = await exportElementToPng(el, 2.5);
+      const dataUrl = await exportElementToPng(el);
       const slide = pptx.addSlide();
       slide.addImage({
         data: dataUrl,
