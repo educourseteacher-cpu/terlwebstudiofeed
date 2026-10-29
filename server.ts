@@ -1,5 +1,5 @@
 import express from 'express';
-import type { Request, Response } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
@@ -12,15 +12,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const isProd = process.env.NODE_ENV === 'production';
+const PORT = 3000;
 const distPath = path.resolve(__dirname, 'dist');
 const hasDist = fs.existsSync(path.resolve(distPath, 'index.html'));
-const isProd = process.env.NODE_ENV === 'production' || hasDist;
 
 app.use(express.json({ limit: '10mb' }));
 
 // Enable CORS for all routes
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -374,7 +374,7 @@ app.get('/api/suggest-topics', (req: Request, res: Response) => {
 
 // Server Initialization
 async function startServer() {
-  if (hasDist) {
+  if (isProd && hasDist) {
     console.log(`Production mode: Serving static files from ${distPath}`);
     app.use(express.static(distPath));
     app.get('*', (_req: Request, res: Response) => {
@@ -388,10 +388,37 @@ async function startServer() {
       appType: 'spa',
     });
     app.use(vite.middlewares);
+
+    // Fallback for SPA routing in development
+    app.use('*', async (req: Request, res: Response, next: NextFunction) => {
+      const url = req.originalUrl;
+      if (url.startsWith('/api')) {
+        return next();
+      }
+      try {
+        const indexHtmlPath = path.resolve(__dirname, 'index.html');
+        if (fs.existsSync(indexHtmlPath)) {
+          let template = fs.readFileSync(indexHtmlPath, 'utf-8');
+          template = await vite.transformIndexHtml(url, template);
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+        } else {
+          next();
+        }
+      } catch (e: any) {
+        if (vite && typeof vite.ssrFixStacktrace === 'function') {
+          vite.ssrFixStacktrace(e);
+        }
+        next(e);
+      }
+    });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server successfully running on http://0.0.0.0:${PORT} (hasDist: ${hasDist}, isProd: ${isProd})`);
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server successfully running on http://0.0.0.0:${PORT} (mode: ${isProd ? 'production' : 'development'})`);
+  });
+
+  server.on('error', (err: any) => {
+    console.error('Server error encountered:', err);
   });
 }
 

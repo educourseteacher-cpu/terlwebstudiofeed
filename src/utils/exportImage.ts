@@ -71,9 +71,16 @@ export async function exportElementToPng(element: HTMLElement, scale?: number): 
   await prepareElementForCapture(element);
   const ratio = scale || getTargetPixelRatio(element, 2.25);
 
+  const filterFn = (domNode: HTMLElement) => {
+    if (domNode.getAttribute && domNode.getAttribute('data-canvas-ignore') === 'true') {
+      return false;
+    }
+    return true;
+  };
+
   // Warm-up pass: initializes SVG font caches & CSS transforms
   try {
-    await toPng(element, { pixelRatio: 1, quality: 0.95 });
+    await toPng(element, { pixelRatio: 1, quality: 0.95, filter: filterFn });
   } catch (_) {}
 
   // Final high-fidelity rasterization pass
@@ -81,6 +88,7 @@ export async function exportElementToPng(element: HTMLElement, scale?: number): 
     pixelRatio: ratio,
     quality: 1.0,
     cacheBust: true,
+    filter: filterFn,
     style: {
       transform: 'none',
     }
@@ -91,15 +99,23 @@ export async function exportElementToBlob(element: HTMLElement, scale?: number):
   await prepareElementForCapture(element);
   const ratio = scale || getTargetPixelRatio(element, 2.25);
 
+  const filterFn = (domNode: HTMLElement) => {
+    if (domNode.getAttribute && domNode.getAttribute('data-canvas-ignore') === 'true') {
+      return false;
+    }
+    return true;
+  };
+
   // Warm-up pass
   try {
-    await toBlob(element, { pixelRatio: 1, quality: 0.95 });
+    await toBlob(element, { pixelRatio: 1, quality: 0.95, filter: filterFn });
   } catch (_) {}
 
   const blob = await toBlob(element, {
     pixelRatio: ratio,
     quality: 1.0,
     cacheBust: true,
+    filter: filterFn,
     style: {
       transform: 'none',
     }

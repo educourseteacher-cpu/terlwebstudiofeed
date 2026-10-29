@@ -4,7 +4,10 @@ import {
   AspectRatioType, 
   FeedContent, 
   SlideItem, 
-  BrandSettings 
+  BrandSettings,
+  ElementKey,
+  ElementPosition,
+  ElementPositions 
 } from './types';
 import { THEME_CONFIGS } from './utils/themeStyles';
 import { PRESET_TEMPLATES, PresetTemplate } from './utils/presets';
@@ -27,6 +30,7 @@ import { BrandCustomizer } from './components/BrandCustomizer';
 import { CaptionStudio } from './components/CaptionStudio';
 import { HookGeneratorModal } from './components/HookGeneratorModal';
 import { PresetsModal } from './components/PresetsModal';
+import { PositionControlPanel } from './components/PositionControlPanel';
 
 import { 
   Sparkles, 
@@ -47,7 +51,8 @@ import {
   Globe,
   SlidersHorizontal,
   ChevronDown,
-  Palette
+  Palette,
+  Move
 } from 'lucide-react';
 
 const DEFAULT_FEED_CONTENT: FeedContent = {
@@ -156,7 +161,10 @@ export default function App() {
   const [aspectRatio, setAspectRatio] = useState<AspectRatioType>('portrait');
   const [mode, setMode] = useState<'single' | 'carousel'>('single');
   const [previewMode, setPreviewMode] = useState<'canvas' | 'phone'>('canvas');
-  const [activeTab, setActiveTab] = useState<'visual' | 'caption'>('visual');
+  const [activeTab, setActiveTab] = useState<'visual' | 'layout' | 'caption'>('visual');
+  const [singlePositions, setSinglePositions] = useState<ElementPositions>({});
+  const [activeElementKey, setActiveElementKey] = useState<ElementKey>('title');
+  const [isDragEnabled, setIsDragEnabled] = useState(true);
 
   // Content States
   const [content, setContent] = useState<FeedContent>(DEFAULT_FEED_CONTENT);
@@ -195,6 +203,46 @@ export default function App() {
     setTimeout(() => {
       setToast(prev => ({ ...prev, show: false }));
     }, 3800);
+  };
+
+  const currentPositions: ElementPositions = mode === 'single'
+    ? (content.elementPositions || singlePositions)
+    : (carouselSlides[activeSlideIndex]?.elementPositions || {});
+
+  const handleUpdatePosition = (key: ElementKey, pos: ElementPosition) => {
+    if (mode === 'single') {
+      const updated = { ...currentPositions, [key]: pos };
+      setSinglePositions(updated);
+      setContent(prev => ({ ...prev, elementPositions: updated }));
+    } else {
+      const updatedSlides = [...carouselSlides];
+      const slidePos = { ...(updatedSlides[activeSlideIndex]?.elementPositions || {}), [key]: pos };
+      updatedSlides[activeSlideIndex] = {
+        ...updatedSlides[activeSlideIndex],
+        elementPositions: slidePos
+      };
+      setCarouselSlides(updatedSlides);
+    }
+  };
+
+  const handleResetElementKey = (key: ElementKey) => {
+    handleUpdatePosition(key, { x: 0, y: 0, scale: 1 });
+    showToast('Posisi Direset', `Posisi elemen dikembalikan ke default.`);
+  };
+
+  const handleResetAllPositions = () => {
+    if (mode === 'single') {
+      setSinglePositions({});
+      setContent(prev => ({ ...prev, elementPositions: {} }));
+    } else {
+      const updatedSlides = [...carouselSlides];
+      updatedSlides[activeSlideIndex] = {
+        ...updatedSlides[activeSlideIndex],
+        elementPositions: {}
+      };
+      setCarouselSlides(updatedSlides);
+    }
+    showToast('Semua Posisi Direset', 'Semua posisi elemen kembali ke default template.');
   };
 
   // 1-Click AI Generation
@@ -600,21 +648,35 @@ export default function App() {
             />
           )}
 
-          {/* TABS: Content Editor vs Caption Studio */}
-          <div className="flex border-b border-slate-800 text-xs font-bold">
+          {/* TABS: Content Editor vs Layout Position vs Caption Studio */}
+          <div className="flex border-b border-slate-800 text-xs font-bold overflow-x-auto">
             <button
               onClick={() => setActiveTab('visual')}
-              className={`pb-2.5 px-3 border-b-2 transition-colors ${
+              className={`pb-2.5 px-3 border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === 'visual'
                   ? 'border-amber-400 text-amber-400'
                   : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
-              Editor Teks Slide
+              Editor Teks
+            </button>
+            <button
+              onClick={() => setActiveTab('layout')}
+              className={`pb-2.5 px-3 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+                activeTab === 'layout'
+                  ? 'border-amber-400 text-amber-400'
+                  : 'border-transparent text-slate-400 hover:text-white'
+              }`}
+            >
+              <Move className="w-3.5 h-3.5 text-amber-400" />
+              <span>Atur Posisi Elemen</span>
+              {Object.keys(currentPositions).length > 0 && (
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              )}
             </button>
             <button
               onClick={() => setActiveTab('caption')}
-              className={`pb-2.5 px-3 border-b-2 transition-colors ${
+              className={`pb-2.5 px-3 border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === 'caption'
                   ? 'border-amber-400 text-amber-400'
                   : 'border-transparent text-slate-400 hover:text-white'
@@ -782,7 +844,24 @@ export default function App() {
             </div>
           )}
 
-          {/* TAB 2: Caption Studio */}
+          {/* TAB 2: Position & Layout Controller */}
+          {activeTab === 'layout' && (
+            <PositionControlPanel
+              theme={theme}
+              mode={mode}
+              slideType={mode === 'carousel' ? activeSlide?.slideType : 'points'}
+              positions={currentPositions}
+              activeKey={activeElementKey}
+              onSelectKey={setActiveElementKey}
+              onUpdatePosition={handleUpdatePosition}
+              onResetKey={handleResetElementKey}
+              onResetAll={handleResetAllPositions}
+              isDragEnabled={isDragEnabled}
+              onToggleDrag={setIsDragEnabled}
+            />
+          )}
+
+          {/* TAB 3: Caption Studio */}
           {activeTab === 'caption' && (
             <CaptionStudio
               content={content}
@@ -887,6 +966,44 @@ export default function App() {
             </div>
           </div>
 
+          {/* Interactive Mode & Drag Indicator */}
+          {previewMode === 'canvas' && (
+            <div className="w-full flex items-center justify-between px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-[11px]">
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${isDragEnabled ? 'bg-amber-400 animate-pulse' : 'bg-slate-600'}`} />
+                <span className="text-slate-300 font-medium">
+                  {isDragEnabled ? (
+                    <>
+                      <span>Mode Drag Canvas: </span>
+                      <strong className="text-amber-400">Aktif</strong>
+                      <span className="text-slate-400 text-[10px] ml-1">(Klik & seret elemen langsung pada preview)</span>
+                    </>
+                  ) : (
+                    <span className="text-slate-400">Mode Drag Canvas: Nonaktif</span>
+                  )}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsDragEnabled(!isDragEnabled)}
+                  className="text-[10px] text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer"
+                >
+                  {isDragEnabled ? 'Kunci Posisi' : 'Aktifkan Drag'}
+                </button>
+                {Object.keys(currentPositions).length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleResetAllPositions}
+                    className="text-[10px] text-rose-400 hover:text-rose-300 font-bold underline cursor-pointer"
+                  >
+                    Reset Posisi
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Render Area */}
           <div className="w-full flex items-center justify-center p-2 min-h-[560px]">
             {previewMode === 'canvas' ? (
@@ -901,6 +1018,14 @@ export default function App() {
                   totalSlides={carouselSlides.length}
                   brand={brand}
                   mode={mode}
+                  elementPositions={currentPositions}
+                  activeElementKey={activeElementKey}
+                  isInteractive={isDragEnabled && !exporting}
+                  onSelectElement={(key) => {
+                    setActiveElementKey(key);
+                    setActiveTab('layout');
+                  }}
+                  onUpdatePosition={handleUpdatePosition}
                 />
               </div>
             ) : (
@@ -914,6 +1039,8 @@ export default function App() {
                   totalSlides={carouselSlides.length}
                   brand={brand}
                   mode={mode}
+                  elementPositions={currentPositions}
+                  isInteractive={false}
                 />
               </InstagramPhoneMockup>
             )}

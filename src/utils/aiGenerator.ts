@@ -1,4 +1,5 @@
 import { FeedContent, SlideItem } from '../types';
+import { detectVisualTopic } from './imageService';
 
 export interface GenerateFeedParams {
   prompt: string;
@@ -16,11 +17,13 @@ export interface GenerateCarouselParams {
 
 /**
  * Intelligent client-side generator that understands prompt topics
- * and produces tailored, high-converting social media content.
+ * and produces tailored, high-converting social media content with
+ * automatically matched relevant photos and visual elements.
  */
 export function generateClientFeed(prompt: string, theme: string): FeedContent {
   const p = prompt.trim();
   const lower = p.toLowerCase();
+  const visualContext = detectVisualTopic(p);
 
   let mainTitle = p.length > 55 ? p.substring(0, 55).toUpperCase() : p.toUpperCase();
   let highlightBanner = 'BEDA LEVEL';
@@ -67,6 +70,16 @@ export function generateClientFeed(prompt: string, theme: string): FeedContent {
       { number: '02', title: 'TAMPILAN RUSAK DI HP', desc: 'Mayoritas pembeli browsing lewat smartphone. Desain wajib responsif sempurna.', tag: 'MOBILE' },
       { number: '03', title: 'TIDAK ADA TOMBOL WA JELAS', desc: 'Konsumen Indonesia suka chat kilat. Pastikan tombol kontak melayang di layar.', tag: 'CLOSING' }
     ];
+  } else if (lower.includes('kopi') || lower.includes('coffee') || lower.includes('cafe') || lower.includes('kafe')) {
+    mainTitle = 'STRATEGI BRANDING & DESAIN WEB COFFEE SHOP KEKINIAN';
+    highlightBanner = 'COFFEE VIBES';
+    subtitle = 'F&B BRANDING GUIDE';
+    headerBadge = 'CAFE INSIGHT';
+    points = [
+      { number: '01', title: 'FOTO MENU AESTHETIC & TAJAM', desc: 'Visual latte art dan ambience kafe yang menggugah selera menaikkan foot traffic hingga 40%.', tag: 'AESTHETIC' },
+      { number: '02', title: 'INTEGRASI GOOGLE MAPS & MENU', desc: 'Mudahkan pelanggan menemukan titik lokasi dan mengecek daftar harga sebelum datang.', tag: 'LOCATION' },
+      { number: '03', title: 'ATMOSFER & STORYTELLING BIJI KOPI', desc: 'Ceritakan asal usul biji kopi dan barista pilihan untuk membangun nilai premium.', tag: 'STORY' }
+    ];
   } else if (lower.includes('claude') || lower.includes('plugin') || lower.includes('ai') || lower.includes('code')) {
     mainTitle = 'PLUGIN ANDALAN YANG BIKIN WORKFLOW CODING BEDA LEVEL';
     highlightBanner = 'BEDA LEVEL';
@@ -111,15 +124,21 @@ export function generateClientFeed(prompt: string, theme: string): FeedContent {
     hashtags: [
       '#terlwebstudio', '#growtyourbranding', '#webdesign', '#digitalbranding',
       '#instagramfeed', '#marketingtips', '#bisnisonline', '#uidesign'
-    ]
+    ],
+    // Visual auto-detection
+    imageUrl: visualContext.defaultPhotoUrl,
+    imageKeyword: visualContext.primaryKeyword,
+    showImage: false, // Default off in points mode, can be turned on by user
+    imageLayout: 'card'
   };
 }
 
 export function generateClientCarousel(prompt: string, slideCount: number = 5): SlideItem[] {
   const p = prompt.trim() || 'Strategi Desain Web & Branding Modern';
+  const visualContext = detectVisualTopic(p);
   const slides: SlideItem[] = [];
 
-  // Cover
+  // Slide 1: Cover
   slides.push({
     id: `slide-1`,
     slideType: 'cover',
@@ -129,7 +148,11 @@ export function generateClientCarousel(prompt: string, slideCount: number = 5): 
     description: 'Framework teruji untuk menaikkan reputasi brand dan konversi penjualan Anda.',
     statNumber: '10X',
     statLabel: 'Brand Impact',
-    customFooter: '< GROWTH YOUR BRANDING >'
+    customFooter: '< GROWTH YOUR BRANDING >',
+    imageUrl: visualContext.defaultPhotoUrl,
+    imageKeyword: visualContext.primaryKeyword,
+    showImage: false,
+    imageLayout: 'card'
   });
 
   const insights = [
@@ -139,29 +162,73 @@ export function generateClientCarousel(prompt: string, slideCount: number = 5): 
     { title: 'PANDU KE LANGKAH BERIKUTNYA', desc: 'Tombol Call-to-Action (CTA) harus kontras, jelas, dan memandu prospek tanpa friksi.' }
   ];
 
-  for (let i = 0; i < Math.min(slideCount - 2, insights.length); i++) {
-    slides.push({
-      id: `slide-${i + 2}`,
-      slideType: i % 2 === 1 ? 'comparison' : 'insight',
-      badge: `LANGKAH 0${i + 1} // PRAKTIK`,
-      title: insights[i].title,
-      description: insights[i].desc,
-      statNumber: `0${i + 1}`,
-      statLabel: 'KEY FOCUS',
-      customFooter: '< GROWTH YOUR BRANDING >'
-    });
+  // Distribute intermediate slides, making sure one dedicated slide is a VISUAL SHOWCASE
+  const count = Math.max(3, slideCount);
+  const visualSlideIdx = Math.min(2, count - 2); // Put visual showcase on slide 2 or 3
+
+  for (let i = 1; i < count - 1; i++) {
+    const isVisualSlot = i === visualSlideIdx;
+    const photoItem = visualContext.suggestedPhotos[(i - 1) % visualContext.suggestedPhotos.length] || visualContext.suggestedPhotos[0];
+
+    if (isVisualSlot) {
+      slides.push({
+        id: `slide-${i + 1}`,
+        slideType: 'visual',
+        badge: `VISUAL // ${visualContext.categoryLabel.toUpperCase()}`,
+        title: `VISUALISASI: ${visualContext.primaryKeyword.toUpperCase()}`,
+        description: `Implementasi visual yang relevan dengan topik "${p}". Memberikan konteks nyata yang mudah dipahami audiens dalam sekali lihat.`,
+        statNumber: '02',
+        statLabel: 'VISUAL CONTEXT',
+        customFooter: '< GROWTH YOUR BRANDING >',
+        imageUrl: photoItem.url,
+        imageKeyword: visualContext.primaryKeyword,
+        showImage: true,
+        imageLayout: 'card'
+      });
+    } else if (i % 2 === 0) {
+      slides.push({
+        id: `slide-${i + 1}`,
+        slideType: 'comparison',
+        badge: `LANGKAH 0${i + 1} // DO VS DONT`,
+        title: insights[(i - 1) % insights.length].title,
+        description: insights[(i - 1) % insights.length].desc,
+        statNumber: `0${i + 1}`,
+        statLabel: 'KEY FOCUS',
+        customFooter: '< GROWTH YOUR BRANDING >',
+        imageUrl: photoItem.url,
+        imageKeyword: visualContext.primaryKeyword,
+        showImage: false
+      });
+    } else {
+      slides.push({
+        id: `slide-${i + 1}`,
+        slideType: 'insight',
+        badge: `LANGKAH 0${i + 1} // PRAKTIK`,
+        title: insights[(i - 1) % insights.length].title,
+        description: insights[(i - 1) % insights.length].desc,
+        statNumber: `0${i + 1}`,
+        statLabel: 'KEY FOCUS',
+        customFooter: '< GROWTH YOUR BRANDING >',
+        imageUrl: photoItem.url,
+        imageKeyword: visualContext.primaryKeyword,
+        showImage: false
+      });
+    }
   }
 
   // Final CTA Slide
   slides.push({
-    id: `slide-${slideCount}`,
+    id: `slide-${count}`,
     slideType: 'cta',
     badge: 'FINAL STEP // ACTION',
     title: 'SIAP SCALE UP BRAND DIGITAL ANDA?',
     description: 'Jangan biarkan bisnis Anda terlihat amatir di mata calon pelanggan berharga.',
     statNumber: 'TERL',
     statLabel: 'STUDIO',
-    customFooter: '< GROWTH YOUR BRANDING >'
+    customFooter: '< GROWTH YOUR BRANDING >',
+    imageUrl: visualContext.suggestedPhotos[visualContext.suggestedPhotos.length - 1]?.url,
+    imageKeyword: visualContext.primaryKeyword,
+    showImage: false
   });
 
   return slides;
@@ -183,7 +250,18 @@ export async function generateContentUniversal(params: GenerateFeedParams): Prom
     if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && json.data) {
-        return { data: json.data, source: 'api' };
+        // Enrich with visual context if not present
+        const visualContext = detectVisualTopic(params.prompt);
+        return {
+          data: {
+            ...json.data,
+            imageUrl: json.data.imageUrl || visualContext.defaultPhotoUrl,
+            imageKeyword: json.data.imageKeyword || visualContext.primaryKeyword,
+            showImage: json.data.showImage ?? false,
+            imageLayout: json.data.imageLayout || 'card'
+          },
+          source: 'api'
+        };
       }
     }
   } catch (err) {
@@ -209,8 +287,17 @@ export async function generateCarouselUniversal(params: GenerateCarouselParams):
     if (res.ok && contentType.includes('application/json')) {
       const json = await res.json();
       if (json.success && json.data && json.data.slides) {
+        const visualContext = detectVisualTopic(params.prompt);
+        const enrichedSlides = json.data.slides.map((s: SlideItem, idx: number) => ({
+          ...s,
+          imageUrl: s.imageUrl || visualContext.suggestedPhotos[idx % visualContext.suggestedPhotos.length]?.url || visualContext.defaultPhotoUrl,
+          imageKeyword: s.imageKeyword || visualContext.primaryKeyword,
+          showImage: s.slideType === 'visual' || s.slideType === 'showcase' || (idx === 1 && s.showImage !== false),
+          imageLayout: s.imageLayout || 'card'
+        }));
+
         return {
-          slides: json.data.slides,
+          slides: enrichedSlides,
           caption: json.data.caption,
           source: 'api'
         };

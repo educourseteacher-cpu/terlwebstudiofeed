@@ -1,19 +1,24 @@
 import React from 'react';
-import { AspectRatioType, BrandSettings, FeedContent, SlideItem, ThemeType } from '../types';
-import { THEME_CONFIGS } from '../utils/themeStyles';
 import { 
-  Sparkles, 
+  AspectRatioType, 
+  BrandSettings, 
+  ElementKey, 
+  ElementPosition, 
+  ElementPositions, 
+  FeedContent, 
+  SlideItem, 
+  ThemeType 
+} from '../types';
+import { THEME_CONFIGS } from '../utils/themeStyles';
+import { DraggableElement } from './DraggableElement';
+import { 
   ArrowRight, 
   Bookmark, 
   Share2, 
   CheckCircle2, 
   XCircle, 
-  Volume2, 
   VolumeX, 
-  Plus, 
-  Heart,
-  MessageCircle,
-  Repeat
+  Plus 
 } from 'lucide-react';
 
 interface CanvasRendererProps {
@@ -26,6 +31,11 @@ interface CanvasRendererProps {
   brand: BrandSettings;
   mode: 'single' | 'carousel';
   containerRef?: React.RefObject<HTMLDivElement | null>;
+  elementPositions?: ElementPositions;
+  activeElementKey?: ElementKey | null;
+  isInteractive?: boolean;
+  onSelectElement?: (key: ElementKey) => void;
+  onUpdatePosition?: (key: ElementKey, pos: ElementPosition) => void;
 }
 
 /**
@@ -35,7 +45,7 @@ function cleanHeadline(rawTitle?: string): string {
   if (!rawTitle) return 'TIPS MEMILIH DOMAIN WEBSITE BISNIS';
   let cleaned = rawTitle.replace(/^(headline|judul|topik|topic)\s*[:\-]\s*/i, '');
   cleaned = cleaned.replace(/\s+(tampilkan|buatkan|generate)\s*$/i, '');
-  cleaned = cleaned.replace(/^["'“](.*)["'”]$/, '$1');
+  cleaned = cleaned.replace(/^["'“]+(.*?)["'”]+$/, '$1');
   return cleaned.trim();
 }
 
@@ -48,7 +58,12 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
   totalSlides = 1,
   brand,
   mode,
-  containerRef
+  containerRef,
+  elementPositions = {},
+  activeElementKey = null,
+  isInteractive = false,
+  onSelectElement,
+  onUpdatePosition
 }) => {
   const config = THEME_CONFIGS[theme] || THEME_CONFIGS.brutalism;
 
@@ -64,11 +79,23 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
   const isCarousel = mode === 'carousel' && currentSlide;
   const slideType = isCarousel ? currentSlide.slideType : 'points';
 
+  // Dynamic headline sizing based on length to prevent collision with cards
+  const titleText = isCarousel ? cleanHeadline(currentSlide.title || content.mainTitle) : cleanHeadline(content.mainTitle);
+  const titleLength = titleText.length;
+  const titleSizeClass = 
+    titleLength > 65 ? 'text-base sm:text-lg' :
+    titleLength > 40 ? 'text-lg sm:text-xl' :
+    'text-xl sm:text-2xl';
+
+  const getPos = (key: ElementKey): ElementPosition => {
+    return elementPositions[key] || { x: 0, y: 0, scale: 1 };
+  };
+
   return (
     <div
       ref={containerRef}
       id="capture-canvas-element"
-      className={`${aspectClass} ${config.bgClass} ${config.fontClass} relative flex flex-col justify-between p-7 select-none overflow-hidden transition-all duration-300 ${config.containerBorderClass}`}
+      className={`${aspectClass} ${config.bgClass} ${config.fontClass} relative flex flex-col justify-between p-6 sm:p-7 select-none overflow-hidden transition-all duration-300 ${config.containerBorderClass}`}
       style={{
         boxSizing: 'border-box',
       }}
@@ -118,14 +145,23 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
       {/* ========================================================
           TOP HEADER / BRAND BAR (OFFICIAL TERL WEB STUDIO)
       ======================================================== */}
-      <div className="relative z-10 flex items-center justify-between gap-3 shrink-0 mb-2">
-        <div className="flex items-center gap-2.5 min-w-0">
+      <div className="relative z-20 flex items-center justify-between gap-3 shrink-0 mb-2">
+        <DraggableElement
+          elementKey="header"
+          label="Header Brand"
+          position={getPos('header')}
+          selectedKey={activeElementKey}
+          isInteractive={isInteractive}
+          onSelect={onSelectElement}
+          onChangePosition={onUpdatePosition}
+          className="flex items-center gap-2.5 min-w-0"
+        >
           {/* Official TERL Logo Container with clean white backdrop */}
-          <div className="h-10 px-2 py-1 bg-white rounded-xl shadow-xs border border-black/10 flex items-center justify-center shrink-0">
+          <div className="h-9 px-2 py-1 bg-white rounded-xl shadow-xs border border-black/10 flex items-center justify-center shrink-0">
             <img 
               src={brand.customLogoUrl || '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png'} 
               alt="TERL WEB STUDIO" 
-              className="h-8 w-auto object-contain block"
+              className="h-7 w-auto object-contain block"
               crossOrigin="anonymous"
             />
           </div>
@@ -137,12 +173,21 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
               &lt; {brand.tagline || 'GROWTH YOUR BRANDING'} &gt;
             </span>
           </div>
-        </div>
+        </DraggableElement>
 
         {/* Right Badge / Counter */}
-        <div className="flex items-center gap-2 shrink-0">
+        <DraggableElement
+          elementKey="badge"
+          label="Badge Kategori"
+          position={getPos('badge')}
+          selectedKey={activeElementKey}
+          isInteractive={isInteractive}
+          onSelect={onSelectElement}
+          onChangePosition={onUpdatePosition}
+          className="flex items-center gap-2 shrink-0 ml-auto"
+        >
           {brand.showBadge && (
-            <span className={`${config.badgeClass} whitespace-nowrap`}>
+            <span className={`${config.badgeClass} whitespace-nowrap shadow-xs`}>
               {isCarousel ? currentSlide?.badge : (content.headerBadge || 'PRO INSIGHT')}
             </span>
           )}
@@ -161,13 +206,13 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
               {slideIndex + 1}/{totalSlides}
             </span>
           ) : null}
-        </div>
+        </DraggableElement>
       </div>
 
       {/* ========================================================
-          MIDDLE CONTENT CONTAINER
+          MIDDLE CONTENT CONTAINER (Balanced & Non-Overlapping)
       ======================================================== */}
-      <div className="relative z-10 flex-1 my-auto flex flex-col justify-center py-2 overflow-hidden">
+      <div className="relative z-10 flex-1 my-auto flex flex-col justify-center min-h-0 py-1 overflow-hidden">
         
         {/* ========================================================
             SPECIAL THEME 1: TECH AI CREATOR (ClassAI Blueprint)
@@ -176,60 +221,97 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
           <div className="flex flex-col justify-between h-full py-1">
             {/* Massive Bold Headline with Electric Blue Banner */}
             <div className="space-y-1.5 my-auto">
-              <h1 className="text-2xl sm:text-[32px] font-black tracking-tight leading-[1.05] text-slate-950 uppercase font-sans-app">
-                {content.mainTitle || '5 PLUGIN YANG BIKIN CLAUDE CODE KAMU'}
-              </h1>
+              <DraggableElement
+                elementKey="title"
+                label="Judul Headline"
+                position={getPos('title')}
+                selectedKey={activeElementKey}
+                isInteractive={isInteractive}
+                onSelect={onSelectElement}
+                onChangePosition={onUpdatePosition}
+              >
+                <h1 className="text-xl sm:text-[28px] font-black tracking-tight leading-[1.08] text-slate-950 uppercase font-sans-app">
+                  {content.mainTitle || '5 PLUGIN YANG BIKIN CLAUDE CODE KAMU'}
+                </h1>
+              </DraggableElement>
               
               {/* The Signature Electric Blue Pill Box */}
-              <div>
-                <div className="inline-block bg-[#2563EB] text-white px-5 py-2.5 rounded-2xl shadow-[0_8px_25px_rgba(37,99,235,0.4)] text-2xl sm:text-3xl font-black tracking-tight uppercase transform -rotate-0.5">
+              <DraggableElement
+                elementKey="highlight"
+                label="Kotak Banner Biru"
+                position={getPos('highlight')}
+                selectedKey={activeElementKey}
+                isInteractive={isInteractive}
+                onSelect={onSelectElement}
+                onChangePosition={onUpdatePosition}
+              >
+                <div className="inline-block bg-[#2563EB] text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl shadow-[0_8px_25px_rgba(37,99,235,0.35)] text-xl sm:text-2xl font-black tracking-tight uppercase transform -rotate-0.5">
                   {content.highlightBanner || currentSlide?.highlightBanner || 'BEDA LEVEL'}
                 </div>
-              </div>
+              </DraggableElement>
 
               {/* Subtitle with colored keyword */}
-              <p className="text-xs sm:text-sm font-semibold text-slate-700 pt-1 font-sans-app">
-                {content.subtitle ? (
-                  <span>
-                    {content.subtitle.replace('resmi', '')}
-                    <span className="text-[#2563EB] font-black">resmi</span>
-                    {content.subtitle.includes('resmi') ? content.subtitle.split('resmi')[1] : ''}
-                  </span>
-                ) : (
-                  <span>3 di antaranya <span className="text-[#2563EB] font-black">resmi</span> dari Anthropic.</span>
-                )}
-              </p>
+              <DraggableElement
+                elementKey="subtitle"
+                label="Subtitle"
+                position={getPos('subtitle')}
+                selectedKey={activeElementKey}
+                isInteractive={isInteractive}
+                onSelect={onSelectElement}
+                onChangePosition={onUpdatePosition}
+              >
+                <p className="text-xs sm:text-sm font-semibold text-slate-700 pt-1 font-sans-app">
+                  {content.subtitle ? (
+                    <span>
+                      {content.subtitle.replace(/resmi/i, '')}
+                      <span className="text-[#2563EB] font-black"> resmi </span>
+                      {content.subtitle.toLowerCase().includes('resmi') ? content.subtitle.split(/resmi/i)[1] : ''}
+                    </span>
+                  ) : (
+                    <span>3 di antaranya <span className="text-[#2563EB] font-black">resmi</span> dari Anthropic.</span>
+                  )}
+                </p>
+              </DraggableElement>
             </div>
 
             {/* Visual Centerpiece: Squircle App Badges with + sign OR 3 Cards in Points Mode */}
             {mode === 'single' ? (
-              <div className="flex items-center justify-center gap-3.5 my-auto py-2">
+              <DraggableElement
+                elementKey="visual"
+                label="Visual Centerpiece"
+                position={getPos('visual')}
+                selectedKey={activeElementKey}
+                isInteractive={isInteractive}
+                onSelect={onSelectElement}
+                onChangePosition={onUpdatePosition}
+                className="flex items-center justify-center gap-3.5 my-auto py-2"
+              >
                 {/* Squircle 1: Coral Claude Starburst */}
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-[#D97757] shadow-xl flex items-center justify-center p-4 transform -rotate-1 hover:rotate-0 transition-transform">
-                  <div className="text-white text-4xl sm:text-5xl font-black">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-[#D97757] shadow-xl flex items-center justify-center p-3 transform -rotate-1 hover:rotate-0 transition-transform">
+                  <div className="text-white text-3xl sm:text-4xl font-black">
                     ✱
                   </div>
                 </div>
 
                 {/* Plus connector */}
                 <div className="text-[#2563EB] text-2xl font-black shrink-0">
-                  <Plus className="w-7 h-7 stroke-[4]" />
+                  <Plus className="w-6 h-6 stroke-[3.5]" />
                 </div>
 
                 {/* Squircle 2: Dark Slate AI Badge */}
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-[#1E293B] shadow-xl flex items-center justify-center p-4 transform rotate-1 hover:rotate-0 transition-transform">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-[#1E293B] shadow-xl flex items-center justify-center p-3 transform rotate-1 hover:rotate-0 transition-transform">
                   {/* Top-Right Badge: "3 RESMI" */}
-                  <div className="absolute -top-2.5 right-1 bg-[#2563EB] text-white text-[9px] font-mono font-bold px-2.5 py-0.5 rounded-md shadow-md uppercase">
+                  <div className="absolute -top-2.5 right-1 bg-[#2563EB] text-white text-[8px] font-mono font-bold px-2 py-0.5 rounded-md shadow-md uppercase">
                     3 RESMI
                   </div>
-                  <div className="text-white font-black text-3xl sm:text-4xl tracking-tighter">
+                  <div className="text-white font-black text-2xl sm:text-3xl tracking-tighter">
                     A\
                   </div>
                 </div>
-              </div>
+              </DraggableElement>
             ) : (
               /* In Carousel mode, show current slide details */
-              <div className="my-auto space-y-3">
+              <div className="my-auto space-y-2.5">
                 <div className="p-4 bg-white border border-slate-200/90 rounded-2xl shadow-sm space-y-2">
                   <h3 className="font-black text-sm uppercase text-slate-900">
                     {currentSlide?.title}
@@ -247,11 +329,36 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
           ======================================================== */
           <div className="flex flex-col justify-between h-full py-1 text-center font-serif-app">
             
+            {/* Top Subtitle */}
+            <DraggableElement
+              elementKey="subtitle"
+              label="Subtitle Molen"
+              position={getPos('subtitle')}
+              selectedKey={activeElementKey}
+              isInteractive={isInteractive}
+              onSelect={onSelectElement}
+              onChangePosition={onUpdatePosition}
+              className="pt-1"
+            >
+              <h2 className="text-lg font-serif italic text-[#FDFBF7]/90 tracking-wide">
+                {content.subtitle || 'Molen'}
+              </h2>
+            </DraggableElement>
+
             {/* Big Chunky Puffy Centerpiece ("MO LEN") */}
-            <div className="my-auto flex flex-col items-center justify-center select-none py-2">
-              <div className="font-chunky-app text-7xl sm:text-[96px] font-extrabold text-[#FDFBF7] tracking-tighter leading-[0.80] uppercase drop-shadow-md">
+            <DraggableElement
+              elementKey="highlight"
+              label="Chunky Centerpiece (MO LEN)"
+              position={getPos('highlight')}
+              selectedKey={activeElementKey}
+              isInteractive={isInteractive}
+              onSelect={onSelectElement}
+              onChangePosition={onUpdatePosition}
+              className="my-auto flex flex-col items-center justify-center select-none py-2"
+            >
+              <div className="font-chunky-app text-6xl sm:text-8xl font-extrabold text-[#FDFBF7] tracking-tighter leading-[0.82] uppercase drop-shadow-md">
                 {content.highlightBanner ? (
-                  content.highlightBanner.split('\n').map((line, idx) => (
+                  content.highlightBanner.split(/[\n\\]/).map((line, idx) => (
                     <div key={idx}>{line}</div>
                   ))
                 ) : (
@@ -261,17 +368,26 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                   </>
                 )}
               </div>
-            </div>
+            </DraggableElement>
 
             {/* Bottom Meta & Typography Information */}
-            <div className="space-y-1 pt-2">
-              <p className="font-serif font-bold text-sm text-[#FDFBF7] tracking-tight">
+            <DraggableElement
+              elementKey="footer"
+              label="Footer Typography"
+              position={getPos('footer')}
+              selectedKey={activeElementKey}
+              isInteractive={isInteractive}
+              onSelect={onSelectElement}
+              onChangePosition={onUpdatePosition}
+              className="space-y-1 pt-2"
+            >
+              <p className="font-serif font-bold text-xs sm:text-sm text-[#FDFBF7] tracking-tight">
                 {content.footer || 'Penggunaan : Personal Use'}
               </p>
-              <p className="font-serif italic text-xs text-[#E8DFC9]">
+              <p className="font-serif italic text-[11px] text-[#E8DFC9]">
                 {content.subLink || 'Download : freefonts.io'}
               </p>
-            </div>
+            </DraggableElement>
 
           </div>
         ) : (
@@ -281,94 +397,185 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
           <>
             {/* 1. SINGLE POST or CAROUSEL POINTS TYPE */}
             {(!isCarousel || slideType === 'points') && (
-              <div className="flex flex-col justify-between h-full py-1">
-                {/* Title Container */}
-                <div className="text-center mb-3 px-2">
+              <div className="flex flex-col justify-between h-full py-0.5">
+                {/* Title & Subtitle Container */}
+                <div className="text-center mb-2 px-1 shrink-0">
                   {content.subtitle && (
-                    <span className="text-[10px] font-black uppercase tracking-widest opacity-70 block mb-1">
-                      {content.subtitle}
-                    </span>
+                    <DraggableElement
+                      elementKey="subtitle"
+                      label="Eyebrow Subtitle"
+                      position={getPos('subtitle')}
+                      selectedKey={activeElementKey}
+                      isInteractive={isInteractive}
+                      onSelect={onSelectElement}
+                      onChangePosition={onUpdatePosition}
+                    >
+                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest opacity-70 block mb-1">
+                        {content.subtitle}
+                      </span>
+                    </DraggableElement>
                   )}
-                  <h2 className={`text-xl sm:text-2xl ${config.titleClass} leading-snug break-words font-black tracking-tight`}>
-                    {cleanHeadline(content.mainTitle)}
-                  </h2>
+
+                  <DraggableElement
+                    elementKey="title"
+                    label="Judul Utama"
+                    position={getPos('title')}
+                    selectedKey={activeElementKey}
+                    isInteractive={isInteractive}
+                    onSelect={onSelectElement}
+                    onChangePosition={onUpdatePosition}
+                  >
+                    <h2 className={`${titleSizeClass} ${config.titleClass} leading-tight break-words font-black tracking-tight`}>
+                      {cleanHeadline(content.mainTitle)}
+                    </h2>
+                  </DraggableElement>
                 </div>
 
                 {/* 3 Points Cards Wrapper */}
-                <div className="space-y-2.5 my-auto">
-                  {content.points && content.points.slice(0, 3).map((pt, idx) => (
-                    <div 
-                      key={idx} 
-                      className={`p-3.5 flex items-start gap-3 transition-all ${config.cardClass}`}
-                    >
-                      <div 
-                        className={`w-7 h-7 shrink-0 text-xs flex items-center justify-center font-black ${config.iconBgClass}`}
-                        style={{
-                          backgroundColor: brand.customAccentColor ? brand.customAccentColor : undefined,
-                          color: brand.customAccentColor ? '#000000' : undefined
-                        }}
+                <DraggableElement
+                  elementKey="points"
+                  label="Grup 3 Poin Insight"
+                  position={getPos('points')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="flex flex-col gap-2 sm:gap-2.5 my-auto justify-center min-h-0 flex-1"
+                >
+                  {content.points && content.points.slice(0, 3).map((pt, idx) => {
+                    const pointKey = `point_${idx}` as ElementKey;
+                    return (
+                      <DraggableElement
+                        key={idx}
+                        elementKey={pointKey}
+                        label={`Poin Card #${idx + 1}`}
+                        position={getPos(pointKey)}
+                        selectedKey={activeElementKey}
+                        isInteractive={isInteractive}
+                        onSelect={onSelectElement}
+                        onChangePosition={onUpdatePosition}
                       >
-                        {pt.number || `0${idx + 1}`}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="font-black text-xs uppercase tracking-tight leading-snug break-words">
-                            {pt.title}
-                          </h3>
-                          {pt.tag && (
-                            <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-80 shrink-0 font-bold ml-1">
-                              {pt.tag}
-                            </span>
-                          )}
+                        <div 
+                          className={`p-2.5 sm:p-3 flex items-start gap-2.5 transition-all ${config.cardClass}`}
+                        >
+                          <div 
+                            className={`w-6 h-6 sm:w-7 sm:h-7 shrink-0 text-[11px] sm:text-xs flex items-center justify-center font-black ${config.iconBgClass}`}
+                            style={{
+                              backgroundColor: brand.customAccentColor ? brand.customAccentColor : undefined,
+                              color: brand.customAccentColor ? '#000000' : undefined
+                            }}
+                          >
+                            {pt.number || `0${idx + 1}`}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <h3 className="font-black text-xs uppercase tracking-tight leading-snug break-words">
+                                {pt.title}
+                              </h3>
+                              {pt.tag && (
+                                <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-80 shrink-0 font-bold ml-auto">
+                                  {pt.tag}
+                                </span>
+                              )}
+                            </div>
+                            <p className={`text-[11px] mt-0.5 leading-snug line-clamp-2 ${config.descClass}`}>
+                              {pt.desc}
+                            </p>
+                          </div>
                         </div>
-                        <p className={`text-[11px] mt-1 leading-snug ${config.descClass}`}>
-                          {pt.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                      </DraggableElement>
+                    );
+                  })}
+                </DraggableElement>
               </div>
             )}
 
             {/* 2. CAROUSEL COVER SLIDE */}
             {isCarousel && slideType === 'cover' && (
-              <div className="flex flex-col justify-center items-center text-center px-2 py-4">
-                <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-black/10 dark:bg-white/10 text-[10px] font-mono font-bold tracking-wider uppercase">
+              <div className="flex flex-col justify-center items-center text-center px-2 py-2 my-auto">
+                <DraggableElement
+                  elementKey="badge"
+                  label="Badge Cover"
+                  position={getPos('badge')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-black/10 dark:bg-white/10 text-[10px] font-mono font-bold tracking-wider uppercase"
+                >
                   <span className="w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: accentColor }} />
                   <span>{currentSlide.badge || 'EXCLUSIVE FRAMEWORK'}</span>
-                </div>
+                </DraggableElement>
 
-                <h1 className={`text-2xl sm:text-3xl ${config.titleClass} leading-snug mb-4`}>
-                  {cleanHeadline(currentSlide.title || content.mainTitle)}
-                </h1>
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul Cover"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <h1 className={`text-xl sm:text-3xl ${config.titleClass} leading-tight mb-3`}>
+                    {cleanHeadline(currentSlide.title || content.mainTitle)}
+                  </h1>
+                </DraggableElement>
 
-                <p className={`text-xs max-w-sm mx-auto leading-relaxed opacity-85 mb-6 ${config.descClass}`}>
-                  {currentSlide.description || 'Framework teruji untuk menaikkan reputasi brand dan konversi penjualan Anda.'}
-                </p>
+                <DraggableElement
+                  elementKey="subtitle"
+                  label="Deskripsi Cover"
+                  position={getPos('subtitle')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <p className={`text-xs max-w-sm mx-auto leading-relaxed opacity-85 mb-4 ${config.descClass}`}>
+                    {currentSlide.description || 'Framework teruji untuk menaikkan reputasi brand dan konversi penjualan Anda.'}
+                  </p>
+                </DraggableElement>
 
                 {currentSlide.statNumber && (
-                  <div 
-                    className={`px-5 py-3 rounded-2xl flex items-center gap-3 border ${config.cardClass}`}
+                  <DraggableElement
+                    elementKey="stat"
+                    label="Metric Card"
+                    position={getPos('stat')}
+                    selectedKey={activeElementKey}
+                    isInteractive={isInteractive}
+                    onSelect={onSelectElement}
+                    onChangePosition={onUpdatePosition}
                   >
-                    <span className="text-2xl font-black" style={{ color: accentColor }}>
-                      {currentSlide.statNumber}
-                    </span>
-                    <div className="text-left">
-                      <span className="text-[9px] uppercase font-bold tracking-wider opacity-60 block">Metric Impact</span>
-                      <span className="text-xs font-extrabold">{currentSlide.statLabel || 'Peningkatan Hasil'}</span>
+                    <div 
+                      className={`px-4 py-2.5 rounded-2xl flex items-center gap-3 border ${config.cardClass}`}
+                    >
+                      <span className="text-2xl font-black" style={{ color: accentColor }}>
+                        {currentSlide.statNumber}
+                      </span>
+                      <div className="text-left">
+                        <span className="text-[9px] uppercase font-bold tracking-wider opacity-60 block">Metric Impact</span>
+                        <span className="text-xs font-extrabold">{currentSlide.statLabel || 'Peningkatan Hasil'}</span>
+                      </div>
                     </div>
-                  </div>
+                  </DraggableElement>
                 )}
               </div>
             )}
 
             {/* 3. CAROUSEL INSIGHT SLIDE */}
             {isCarousel && slideType === 'insight' && (
-              <div className="flex flex-col justify-center px-3 py-2 space-y-4">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col justify-center px-2 py-2 space-y-3 my-auto">
+                <DraggableElement
+                  elementKey="subtitle"
+                  label="Step Counter"
+                  position={getPos('subtitle')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="flex items-center gap-2"
+                >
                   <span 
-                    className="w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm text-black"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center font-black text-xs text-black"
                     style={{ backgroundColor: accentColor }}
                   >
                     {currentSlide.statNumber || (slideIndex + 1)}
@@ -376,69 +583,149 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                   <span className="text-xs font-mono font-bold uppercase tracking-wider opacity-70">
                     {currentSlide.badge || `LANGKAH KE-${slideIndex + 1}`}
                   </span>
-                </div>
+                </DraggableElement>
 
-                <h2 className={`text-xl sm:text-2xl ${config.titleClass} leading-tight`}>
-                  {cleanHeadline(currentSlide.title)}
-                </h2>
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul Insight"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <h2 className={`text-lg sm:text-2xl ${config.titleClass} leading-tight`}>
+                    {cleanHeadline(currentSlide.title)}
+                  </h2>
+                </DraggableElement>
 
-                <div className={`p-4 rounded-xl ${config.cardClass}`}>
-                  <p className={`text-xs sm:text-sm leading-relaxed ${config.descClass}`}>
-                    {currentSlide.description}
-                  </p>
-                </div>
+                <DraggableElement
+                  elementKey="highlight"
+                  label="Isi Card Insight"
+                  position={getPos('highlight')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <div className={`p-3.5 rounded-xl ${config.cardClass}`}>
+                    <p className={`text-xs sm:text-sm leading-relaxed ${config.descClass}`}>
+                      {currentSlide.description}
+                    </p>
+                  </div>
+                </DraggableElement>
               </div>
             )}
 
             {/* 4. CAROUSEL COMPARISON SLIDE */}
             {isCarousel && slideType === 'comparison' && (
-              <div className="space-y-3 py-2">
-                <h2 className={`text-lg sm:text-xl text-center ${config.titleClass} mb-2`}>
-                  {cleanHeadline(currentSlide.title || 'APA YANG HARUS DIUBAH?')}
-                </h2>
+              <div className="space-y-2.5 py-1 my-auto">
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul Komparasi"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <h2 className={`text-base sm:text-xl text-center ${config.titleClass} mb-2`}>
+                    {cleanHeadline(currentSlide.title || 'APA YANG HARUS DIUBAH?')}
+                  </h2>
+                </DraggableElement>
                 
-                <div className="p-3 rounded-xl border border-rose-500/50 bg-rose-500/10 flex items-start gap-2.5">
-                  <XCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-[10px] font-black uppercase text-rose-500 tracking-wider">HINDARI INI (DON'T)</span>
-                    <p className="text-xs text-rose-200/90 leading-tight mt-0.5">
-                      Menumpuk terlalu banyak teks dan paragraf panjang tanpa jeda visual.
-                    </p>
+                <DraggableElement
+                  elementKey="comparison"
+                  label="DO vs DONT Cards"
+                  position={getPos('comparison')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="space-y-2"
+                >
+                  <div className="p-3 rounded-xl border border-rose-500/50 bg-rose-500/10 flex items-start gap-2.5">
+                    <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-rose-500 tracking-wider">HINDARI INI (DON'T)</span>
+                      <p className="text-xs text-rose-200/90 leading-snug mt-0.5">
+                        Menumpuk terlalu banyak teks dan paragraf panjang tanpa jeda visual.
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 flex items-start gap-2.5">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">LAKUKAN INI (DO)</span>
-                    <p className="text-xs text-emerald-200/90 leading-tight mt-0.5">
-                      Gunakan 1 ide per slide dengan kontras tinggi dan headline tegas.
-                    </p>
+                  <div className="p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">LAKUKAN INI (DO)</span>
+                      <p className="text-xs text-emerald-200/90 leading-snug mt-0.5">
+                        Gunakan 1 ide per slide dengan kontras tinggi dan headline tegas.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </DraggableElement>
               </div>
             )}
 
             {/* 5. CAROUSEL CTA SLIDE */}
             {isCarousel && slideType === 'cta' && (
-              <div className="flex flex-col justify-center items-center text-center px-3 py-2">
-                <div className="bg-white p-2 rounded-2xl shadow-md border border-slate-200/90 flex items-center justify-center mb-3">
-                  <img 
-                    src={brand.customLogoUrl || '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png'} 
-                    alt="TERL WEB STUDIO" 
-                    className="h-10 w-auto object-contain"
-                  />
-                </div>
+              <div className="flex flex-col justify-center items-center text-center px-2 py-1 my-auto">
+                <DraggableElement
+                  elementKey="visual"
+                  label="Logo Tengah CTA"
+                  position={getPos('visual')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <div className="bg-white p-2 rounded-2xl shadow-md border border-slate-200/90 flex items-center justify-center mb-2">
+                    <img 
+                      src={brand.customLogoUrl || '/assets/aistudio/LOGO_TERL_WEB_STUDIO_e8069f23.png'} 
+                      alt="TERL WEB STUDIO" 
+                      className="h-9 w-auto object-contain"
+                    />
+                  </div>
+                </DraggableElement>
 
-                <h2 className={`text-xl sm:text-2xl ${config.titleClass} leading-tight mb-2`}>
-                  {cleanHeadline(currentSlide.title || 'SIMPAN UNTUK NANTI!')}
-                </h2>
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul CTA"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <h2 className={`text-lg sm:text-2xl ${config.titleClass} leading-tight mb-1.5`}>
+                    {cleanHeadline(currentSlide.title || 'SIMPAN UNTUK NANTI!')}
+                  </h2>
+                </DraggableElement>
 
-                <p className={`text-xs max-w-xs leading-relaxed opacity-80 mb-4 ${config.descClass}`}>
-                  {currentSlide.description || 'Jangan biarkan insight ini hilang di feed Anda.'}
-                </p>
+                <DraggableElement
+                  elementKey="subtitle"
+                  label="Deskripsi CTA"
+                  position={getPos('subtitle')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <p className={`text-xs max-w-xs leading-relaxed opacity-80 mb-3 ${config.descClass}`}>
+                    {currentSlide.description || 'Jangan biarkan insight ini hilang di feed Anda.'}
+                  </p>
+                </DraggableElement>
 
-                <div className="grid grid-cols-2 gap-2 w-full max-w-xs mb-3">
+                <DraggableElement
+                  elementKey="highlight"
+                  label="Tombol Aksi CTA"
+                  position={getPos('highlight')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="grid grid-cols-2 gap-2 w-full max-w-xs mb-2.5"
+                >
                   <div className="p-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center gap-2 justify-center text-[11px] font-bold">
                     <Bookmark className="w-3.5 h-3.5 text-amber-500" />
                     <span>Simpan Post</span>
@@ -447,7 +734,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                     <Share2 className="w-3.5 h-3.5 text-cyan-400" />
                     <span>Bagikan</span>
                   </div>
-                </div>
+                </DraggableElement>
 
                 <div className="text-[10px] font-mono font-bold text-amber-500">
                   &lt; {brand.tagline || 'GROWTH YOUR BRANDING'} &gt;
@@ -462,10 +749,19 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
       {/* ========================================================
           BOTTOM FOOTER BAR
       ======================================================== */}
-      <div className="relative z-10 shrink-0">
+      <div className="relative z-20 shrink-0 mt-1">
         {theme === 'techhook' ? (
           /* Tech AI Creator Bottom Bar with Handle and Electric Blue Geser Button */
-          <div className="flex items-center justify-between pt-2">
+          <DraggableElement
+            elementKey="footer"
+            label="Footer Geser"
+            position={getPos('footer')}
+            selectedKey={activeElementKey}
+            isInteractive={isInteractive}
+            onSelect={onSelectElement}
+            onChangePosition={onUpdatePosition}
+            className="flex items-center justify-between pt-2 border-t border-slate-100"
+          >
             <span className="text-xs font-medium text-slate-500 font-mono">
               {brand.handle || '@classai_id'}
             </span>
@@ -478,33 +774,43 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                 <VolumeX className="w-3.5 h-3.5" />
               </div>
             </div>
-          </div>
+          </DraggableElement>
         ) : theme === 'foresttype' ? (
           /* Forest Type: Pure clean minimalism, handled in content area */
           null
         ) : (
           /* Standard Bottom Footer Bar */
           brand.showFooterBar && (
-            <div 
-              className={`-mx-7 -mb-7 py-3 px-5 text-center transition-all ${config.footerBgClass}`}
-              style={{
-                backgroundColor: brand.customAccentColor && theme === 'brutalism' ? brand.customAccentColor : undefined
-              }}
+            <DraggableElement
+              elementKey="footer"
+              label="Footer Bar Bawah"
+              position={getPos('footer')}
+              selectedKey={activeElementKey}
+              isInteractive={isInteractive}
+              onSelect={onSelectElement}
+              onChangePosition={onUpdatePosition}
             >
-              <div className="flex items-center justify-between gap-3 px-1">
-                <span className={`text-[10px] font-black uppercase tracking-wider ${config.footerTextClass} truncate`}>
-                  {isCarousel && currentSlide?.customFooter 
-                    ? currentSlide.customFooter 
-                    : (content.footer || '< GROWTH YOUR BRANDING >')}
-                </span>
-                {brand.showSwipeIndicator && isCarousel && slideIndex < totalSlides - 1 && (
-                  <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider shrink-0 opacity-80">
-                    <span>Swipe</span>
-                    <ArrowRight className="w-3 h-3 animate-pulse" />
+              <div 
+                className={`-mx-6 -mb-6 sm:-mx-7 sm:-mb-7 py-2.5 px-5 text-center transition-all ${config.footerBgClass}`}
+                style={{
+                  backgroundColor: brand.customAccentColor && theme === 'brutalism' ? brand.customAccentColor : undefined
+                }}
+              >
+                <div className="flex items-center justify-between gap-3 px-1">
+                  <span className={`text-[10px] font-black uppercase tracking-wider ${config.footerTextClass} truncate`}>
+                    {isCarousel && currentSlide?.customFooter 
+                      ? currentSlide.customFooter 
+                      : (content.footer || '< GROWTH YOUR BRANDING >')}
                   </span>
-                )}
+                  {brand.showSwipeIndicator && isCarousel && slideIndex < totalSlides - 1 && (
+                    <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider shrink-0 opacity-80">
+                      <span>Swipe</span>
+                      <ArrowRight className="w-3 h-3 animate-pulse" />
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
+            </DraggableElement>
           )
         )}
       </div>
