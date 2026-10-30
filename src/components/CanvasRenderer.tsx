@@ -18,7 +18,13 @@ import {
   CheckCircle2, 
   XCircle, 
   VolumeX, 
-  Plus 
+  Plus,
+  AlertTriangle,
+  CheckSquare,
+  ListChecks,
+  TrendingUp,
+  ShieldAlert,
+  Sparkles
 } from 'lucide-react';
 
 interface CanvasRendererProps {
@@ -395,11 +401,11 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
               STANDARD THEMES RENDERING (Brutalism, Minimal, Cyber, etc.)
           ======================================================== */
           <>
-            {/* 1. SINGLE POST or CAROUSEL POINTS TYPE */}
+            {/* 1. SINGLE POST or CAROUSEL POINTS TYPE: COMPREHENSIVE 1-FEED MASTERCLASS */}
             {(!isCarousel || slideType === 'points') && (
-              <div className="flex flex-col justify-between h-full py-0.5">
-                {/* Title & Subtitle Container */}
-                <div className="text-center mb-2 px-1 shrink-0">
+              <div className="flex flex-col justify-between h-full py-0.5 min-h-0">
+                {/* Title & Eyebrow Container */}
+                <div className="text-center mb-1.5 px-1 shrink-0">
                   {content.subtitle && (
                     <DraggableElement
                       elementKey="subtitle"
@@ -410,7 +416,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                       onSelect={onSelectElement}
                       onChangePosition={onUpdatePosition}
                     >
-                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest opacity-70 block mb-1">
+                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest opacity-70 block mb-0.5">
                         {content.subtitle}
                       </span>
                     </DraggableElement>
@@ -431,18 +437,18 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                   </DraggableElement>
                 </div>
 
-                {/* 3 Points Cards Wrapper */}
+                {/* Points Cards Wrapper (Supports 3-4 High-Density Insight Pillars) */}
                 <DraggableElement
                   elementKey="points"
-                  label="Grup 3 Poin Insight"
+                  label="Pilar Insight Terpadu"
                   position={getPos('points')}
                   selectedKey={activeElementKey}
                   isInteractive={isInteractive}
                   onSelect={onSelectElement}
                   onChangePosition={onUpdatePosition}
-                  className="flex flex-col gap-2 sm:gap-2.5 my-auto justify-center min-h-0 flex-1"
+                  className="flex flex-col gap-1.5 sm:gap-2 my-auto justify-center min-h-0 flex-1 py-1"
                 >
-                  {content.points && content.points.slice(0, 3).map((pt, idx) => {
+                  {content.points && content.points.slice(0, 4).map((pt, idx) => {
                     const pointKey = `point_${idx}` as ElementKey;
                     return (
                       <DraggableElement
@@ -456,10 +462,10 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                         onChangePosition={onUpdatePosition}
                       >
                         <div 
-                          className={`p-2.5 sm:p-3 flex items-start gap-2.5 transition-all ${config.cardClass}`}
+                          className={`p-2 sm:p-2.5 flex items-start gap-2 transition-all ${config.cardClass}`}
                         >
                           <div 
-                            className={`w-6 h-6 sm:w-7 sm:h-7 shrink-0 text-[11px] sm:text-xs flex items-center justify-center font-black ${config.iconBgClass}`}
+                            className={`w-5 h-5 sm:w-6 sm:h-6 shrink-0 text-[10px] sm:text-[11px] flex items-center justify-center font-black ${config.iconBgClass}`}
                             style={{
                               backgroundColor: brand.customAccentColor ? brand.customAccentColor : undefined,
                               color: brand.customAccentColor ? '#000000' : undefined
@@ -468,17 +474,17 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                             {pt.number || `0${idx + 1}`}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2">
-                              <h3 className="font-black text-xs uppercase tracking-tight leading-snug break-words">
+                            <div className="flex items-center justify-between gap-1.5">
+                              <h3 className="font-black text-[11px] sm:text-xs uppercase tracking-tight leading-snug break-words">
                                 {pt.title}
                               </h3>
                               {pt.tag && (
-                                <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-80 shrink-0 font-bold ml-auto">
+                                <span className="text-[7.5px] font-mono uppercase px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 opacity-80 shrink-0 font-bold ml-auto">
                                   {pt.tag}
                                 </span>
                               )}
                             </div>
-                            <p className={`text-[11px] mt-0.5 leading-snug line-clamp-2 ${config.descClass}`}>
+                            <p className={`text-[10px] sm:text-[11px] mt-0.5 leading-snug line-clamp-2 ${config.descClass}`}>
                               {pt.desc}
                             </p>
                           </div>
@@ -487,6 +493,37 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                     );
                   })}
                 </DraggableElement>
+
+                {/* Single Post Takeaway / Blueprint Formula Box */}
+                {content.takeawayBox && (
+                  <DraggableElement
+                    elementKey="formula"
+                    label="Formula / Blueprint Eksekusi"
+                    position={getPos('formula')}
+                    selectedKey={activeElementKey}
+                    isInteractive={isInteractive}
+                    onSelect={onSelectElement}
+                    onChangePosition={onUpdatePosition}
+                    className="shrink-0 mt-1"
+                  >
+                    <div className="p-2 sm:p-2.5 rounded-xl border border-amber-400/50 bg-amber-400/10 dark:bg-amber-400/15 flex items-center justify-between gap-2 shadow-xs">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1 text-[8px] sm:text-[9px] font-black uppercase text-amber-500 tracking-wider">
+                          <Sparkles className="w-2.5 h-2.5 shrink-0" />
+                          <span>{content.takeawayBox.label || 'FORMULA EKSEKUSI'}</span>
+                        </div>
+                        <p className="text-[10px] sm:text-[11px] font-bold leading-tight truncate text-slate-800 dark:text-slate-100 mt-0.5">
+                          {content.takeawayBox.formula}
+                        </p>
+                      </div>
+                      {content.takeawayBox.metric && (
+                        <span className="text-[8px] sm:text-[9px] font-mono font-black px-2 py-0.5 rounded-md bg-amber-400 text-black shrink-0 tracking-tight">
+                          {content.takeawayBox.metric}
+                        </span>
+                      )}
+                    </div>
+                  </DraggableElement>
+                )}
               </div>
             )}
 
@@ -504,7 +541,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                   className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-black/10 dark:bg-white/10 text-[10px] font-mono font-bold tracking-wider uppercase"
                 >
                   <span className="w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: accentColor }} />
-                  <span>{currentSlide.badge || 'EXCLUSIVE FRAMEWORK'}</span>
+                  <span>{currentSlide.badge || 'PRO STRATEGY'}</span>
                 </DraggableElement>
 
                 <DraggableElement
@@ -561,7 +598,247 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
               </div>
             )}
 
-            {/* 3. CAROUSEL INSIGHT SLIDE */}
+            {/* 3. CAROUSEL PROBLEM DIAGNOSIS SLIDE */}
+            {isCarousel && slideType === 'problem' && (
+              <div className="flex flex-col justify-center px-1 py-1 space-y-3 my-auto">
+                <DraggableElement
+                  elementKey="badge"
+                  label="Warning Badge"
+                  position={getPos('badge')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="flex items-center gap-2"
+                >
+                  <span className="px-2.5 py-0.5 rounded-md bg-rose-500/20 text-rose-500 font-mono font-bold text-[10px] tracking-wider uppercase border border-rose-500/30 flex items-center gap-1.5">
+                    <ShieldAlert className="w-3.5 h-3.5" />
+                    <span>{currentSlide.problemData?.warningTag || 'DIAGNOSA AKAR MASALAH'}</span>
+                  </span>
+                </DraggableElement>
+
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul Masalah"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <h2 className={`text-lg sm:text-2xl ${config.titleClass} leading-tight`}>
+                    {cleanHeadline(currentSlide.title || 'KENAPA BANYAK BISNIS GAGAL?')}
+                  </h2>
+                </DraggableElement>
+
+                <DraggableElement
+                  elementKey="highlight"
+                  label="Kartu Analisis Masalah"
+                  position={getPos('highlight')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="space-y-2.5"
+                >
+                  <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-2">
+                    <div className="flex items-start gap-2.5">
+                      <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="text-[10px] font-black uppercase text-rose-500 tracking-wider">
+                          FATAL PITFALL:
+                        </span>
+                        <p className="text-xs leading-snug mt-0.5 font-medium text-slate-800 dark:text-slate-100">
+                          {currentSlide.problemData?.painPoint || currentSlide.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {currentSlide.problemData?.impactText && (
+                      <div className="pt-2 border-t border-rose-500/20 text-[11px] text-rose-600 dark:text-rose-400 font-semibold italic">
+                        ⚠️ {currentSlide.problemData.impactText}
+                      </div>
+                    )}
+                  </div>
+                </DraggableElement>
+              </div>
+            )}
+
+            {/* 4. CAROUSEL FRAMEWORK CORE PILLARS SLIDE */}
+            {isCarousel && slideType === 'framework' && (
+              <div className="flex flex-col justify-center px-1 py-1 space-y-2.5 my-auto">
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul Framework"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <div className="text-center mb-1">
+                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber-500 block">
+                      {currentSlide.badge || 'FRAMEWORK // 3 PILAR UTAMA'}
+                    </span>
+                    <h2 className={`text-base sm:text-xl ${config.titleClass} leading-tight`}>
+                      {cleanHeadline(currentSlide.title || 'FRAMEWORK EKSEKUSI TERUJI')}
+                    </h2>
+                  </div>
+                </DraggableElement>
+
+                <DraggableElement
+                  elementKey="points"
+                  label="Langkah Framework"
+                  position={getPos('points')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="space-y-2"
+                >
+                  {(currentSlide.frameworkSteps || [
+                    { stepNumber: '01', stepTitle: 'CLARITY FIRST', stepDetail: 'Jelaskan masalah dan solusi Anda dalam 1 kalimat tegas.' },
+                    { stepNumber: '02', stepTitle: 'SPEED & ACCESSIBILITY', stepDetail: 'Optimasi loading di bawah 1.5 detik pada semua tipe smartphone.' },
+                    { stepNumber: '03', stepTitle: 'SEAMLESS CONVERSION', stepDetail: 'Hadirkan 1 jalur CTA tanpa friksi menuju WhatsApp atau checkout.' }
+                  ]).map((step, idx) => (
+                    <div 
+                      key={idx}
+                      className={`p-2.5 rounded-xl border flex items-center gap-3 ${config.cardClass}`}
+                    >
+                      <div 
+                        className="w-7 h-7 rounded-lg font-black text-xs flex items-center justify-center shrink-0 text-black"
+                        style={{ backgroundColor: accentColor }}
+                      >
+                        {step.stepNumber}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="text-xs font-black uppercase tracking-tight leading-snug">
+                          {step.stepTitle}
+                        </h4>
+                        <p className={`text-[10px] sm:text-[11px] leading-tight mt-0.5 ${config.descClass}`}>
+                          {step.stepDetail}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </DraggableElement>
+              </div>
+            )}
+
+            {/* 5. CAROUSEL COMPARISON SLIDE */}
+            {isCarousel && slideType === 'comparison' && (
+              <div className="space-y-2 py-1 my-auto">
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul Komparasi"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <h2 className={`text-base sm:text-xl text-center ${config.titleClass} mb-2`}>
+                    {cleanHeadline(currentSlide.title || 'APA YANG HARUS DIUBAH?')}
+                  </h2>
+                </DraggableElement>
+                
+                <DraggableElement
+                  elementKey="comparison"
+                  label="DO vs DONT Cards"
+                  position={getPos('comparison')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="space-y-2"
+                >
+                  <div className="p-3 rounded-xl border border-rose-500/50 bg-rose-500/10 flex items-start gap-2.5">
+                    <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-rose-500 tracking-wider">
+                        {currentSlide.comparisonData?.dontTitle || "HINDARI INI (DON'T)"}
+                      </span>
+                      <p className="text-xs text-rose-900 dark:text-rose-200/90 leading-snug mt-0.5">
+                        {currentSlide.comparisonData?.dontDesc || 'Menumpuk terlalu banyak teks dan paragraf panjang tanpa jeda visual.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-emerald-500 tracking-wider">
+                        {currentSlide.comparisonData?.doTitle || "LAKUKAN INI (DO)"}
+                      </span>
+                      <p className="text-xs text-emerald-900 dark:text-emerald-200/90 leading-snug mt-0.5">
+                        {currentSlide.comparisonData?.doDesc || 'Gunakan 1 ide per slide dengan kontras tinggi dan headline tegas.'}
+                      </p>
+                    </div>
+                  </div>
+                </DraggableElement>
+              </div>
+            )}
+
+            {/* 6. CAROUSEL CHECKLIST SLIDE */}
+            {isCarousel && slideType === 'checklist' && (
+              <div className="space-y-2.5 py-1 my-auto">
+                <DraggableElement
+                  elementKey="title"
+                  label="Judul Checklist"
+                  position={getPos('title')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                >
+                  <div className="text-center mb-1">
+                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber-500 block">
+                      {currentSlide.badge || 'CHECKLIST // PRAKTIK LANGSUNG'}
+                    </span>
+                    <h2 className={`text-base sm:text-xl ${config.titleClass} leading-tight`}>
+                      {cleanHeadline(currentSlide.title || 'CHECKLIST KUNCI SEBELUM EKSEKUSI')}
+                    </h2>
+                  </div>
+                </DraggableElement>
+
+                <DraggableElement
+                  elementKey="checklist"
+                  label="Daftar Checklist"
+                  position={getPos('checklist')}
+                  selectedKey={activeElementKey}
+                  isInteractive={isInteractive}
+                  onSelect={onSelectElement}
+                  onChangePosition={onUpdatePosition}
+                  className="space-y-1.5"
+                >
+                  {(currentSlide.checklistItems || [
+                    { text: 'Headline langsung mengutarakan benefit terbesar pembeli', tag: 'COPY', done: true },
+                    { text: 'Loading halaman lolos skor Google PageSpeed > 90', tag: 'PERFORMA', done: true },
+                    { text: 'Testimoni pelanggan diletakkan sebelum scroll pertama', tag: 'TRUST', done: true },
+                    { text: 'Nomor WhatsApp dan link navigasi teruji aktif tanpa error', tag: 'CLOSING', done: true }
+                  ]).map((item, idx) => (
+                    <div 
+                      key={idx}
+                      className={`p-2 sm:p-2.5 rounded-xl border flex items-center justify-between gap-2 ${config.cardClass}`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <CheckSquare className="w-4 h-4 text-emerald-500 shrink-0" />
+                        <span className="text-xs font-semibold leading-snug truncate">
+                          {item.text}
+                        </span>
+                      </div>
+                      {item.tag && (
+                        <span className="text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 shrink-0">
+                          {item.tag}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </DraggableElement>
+              </div>
+            )}
+
+            {/* 7. CAROUSEL INSIGHT SLIDE */}
             {isCarousel && slideType === 'insight' && (
               <div className="flex flex-col justify-center px-2 py-2 space-y-3 my-auto">
                 <DraggableElement
@@ -617,57 +894,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
               </div>
             )}
 
-            {/* 4. CAROUSEL COMPARISON SLIDE */}
-            {isCarousel && slideType === 'comparison' && (
-              <div className="space-y-2.5 py-1 my-auto">
-                <DraggableElement
-                  elementKey="title"
-                  label="Judul Komparasi"
-                  position={getPos('title')}
-                  selectedKey={activeElementKey}
-                  isInteractive={isInteractive}
-                  onSelect={onSelectElement}
-                  onChangePosition={onUpdatePosition}
-                >
-                  <h2 className={`text-base sm:text-xl text-center ${config.titleClass} mb-2`}>
-                    {cleanHeadline(currentSlide.title || 'APA YANG HARUS DIUBAH?')}
-                  </h2>
-                </DraggableElement>
-                
-                <DraggableElement
-                  elementKey="comparison"
-                  label="DO vs DONT Cards"
-                  position={getPos('comparison')}
-                  selectedKey={activeElementKey}
-                  isInteractive={isInteractive}
-                  onSelect={onSelectElement}
-                  onChangePosition={onUpdatePosition}
-                  className="space-y-2"
-                >
-                  <div className="p-3 rounded-xl border border-rose-500/50 bg-rose-500/10 flex items-start gap-2.5">
-                    <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-[10px] font-black uppercase text-rose-500 tracking-wider">HINDARI INI (DON'T)</span>
-                      <p className="text-xs text-rose-200/90 leading-snug mt-0.5">
-                        Menumpuk terlalu banyak teks dan paragraf panjang tanpa jeda visual.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">LAKUKAN INI (DO)</span>
-                      <p className="text-xs text-emerald-200/90 leading-snug mt-0.5">
-                        Gunakan 1 ide per slide dengan kontras tinggi dan headline tegas.
-                      </p>
-                    </div>
-                  </div>
-                </DraggableElement>
-              </div>
-            )}
-
-            {/* 5. CAROUSEL CTA SLIDE */}
+            {/* 8. CAROUSEL CTA SLIDE */}
             {isCarousel && slideType === 'cta' && (
               <div className="flex flex-col justify-center items-center text-center px-2 py-1 my-auto">
                 <DraggableElement
@@ -698,7 +925,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                   onChangePosition={onUpdatePosition}
                 >
                   <h2 className={`text-lg sm:text-2xl ${config.titleClass} leading-tight mb-1.5`}>
-                    {cleanHeadline(currentSlide.title || 'SIMPAN UNTUK NANTI!')}
+                    {cleanHeadline(currentSlide.title || 'SIAP SCALE UP BRAND DIGITAL ANDA?')}
                   </h2>
                 </DraggableElement>
 
@@ -712,7 +939,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                   onChangePosition={onUpdatePosition}
                 >
                   <p className={`text-xs max-w-xs leading-relaxed opacity-80 mb-3 ${config.descClass}`}>
-                    {currentSlide.description || 'Jangan biarkan insight ini hilang di feed Anda.'}
+                    {currentSlide.description || 'Jangan biarkan bisnis Anda terlihat amatir di mata calon pelanggan berharga.'}
                   </p>
                 </DraggableElement>
 

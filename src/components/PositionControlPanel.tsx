@@ -62,11 +62,19 @@ export const PositionControlPanel: React.FC<PositionControlPanelProps> = ({
       : []),
     ...(mode === 'single' || slideType === 'points'
       ? [
-          { key: 'points' as ElementKey, label: 'Semua 3 Poin Insight (Grup)', category: 'content' as const },
+          { key: 'points' as ElementKey, label: 'Semua Pilar Insight (Grup)', category: 'content' as const },
           { key: 'point_0' as ElementKey, label: 'Poin #01 Card', category: 'content' as const },
           { key: 'point_1' as ElementKey, label: 'Poin #02 Card', category: 'content' as const },
           { key: 'point_2' as ElementKey, label: 'Poin #03 Card', category: 'content' as const },
+          { key: 'point_3' as ElementKey, label: 'Poin #04 Card', category: 'content' as const },
+          { key: 'formula' as ElementKey, label: 'Formula / Blueprint Eksekusi', category: 'content' as const },
         ]
+      : []),
+    ...(slideType === 'checklist'
+      ? [{ key: 'checklist' as ElementKey, label: 'Daftar Checklist Poin', category: 'content' as const }]
+      : []),
+    ...(slideType === 'comparison'
+      ? [{ key: 'comparison' as ElementKey, label: 'Kotak DO vs DONT', category: 'content' as const }]
       : []),
     ...(theme === 'techhook' && mode === 'single'
       ? [{ key: 'visual' as ElementKey, label: 'Visual Squircles (Icon +)', category: 'content' as const }]

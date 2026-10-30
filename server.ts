@@ -49,98 +49,203 @@ const getGeminiClient = () => {
   });
 };
 
-// Fallback generator if API key is not present or API temporary error
+// Fallback generator with deep creative reasoning if API key is not present or temporary error
 function getFallbackFeed(prompt: string, theme: string) {
-  const cleanPrompt = prompt.trim() || 'Strategi Membangun Website & Branding Bisnis Modern';
+  const p = prompt.trim() || 'Strategi Membangun Website & Branding Bisnis Modern';
+  const lower = p.toLowerCase();
+
+  let mainTitle = p.length > 55 ? p.substring(0, 55).toUpperCase() : p.toUpperCase();
+  let subtitle = 'PANDUAN LENGKAP 2026 // MASTERPLAY';
+  let headerBadge = 'HIGH DENSITY INSIGHT';
+  let highlightBanner = 'BEDA LEVEL';
+  let points = [
+    {
+      number: '01',
+      title: 'FIRST IMPRESSION DALAM 3 DETIK',
+      desc: 'Pengunjung memutuskan kredibilitas dalam 50 milidetik. Gunakan visual hierarchy bersih dan benefit headline tegas tanpa jargon berbelit.',
+      tag: 'PSIKOLOGI'
+    },
+    {
+      number: '02',
+      title: 'OPTIMASI MOBILE-FIRST & SPEED < 1.5S',
+      desc: '83% calon pembeli mengakses lewat smartphone. Loading lambat 1 detik saja memangkas peluang closing hingga 26%.',
+      tag: 'PERFORMA'
+    },
+    {
+      number: '03',
+      title: 'SOCIAL PROOF DI ATAS LIPATAN LAYAR',
+      desc: 'Validasi keputusan calon pembeli dengan rating bintang, testimoni terverifikasi, dan logo partner tepat sebelum scroll pertama.',
+      tag: 'VALIDASI'
+    },
+    {
+      number: '04',
+      title: 'SINGLE FOCUSED CTA (NO FRICTION)',
+      desc: 'Jangan buat prospek bingung dengan 5 pilihan berbeda. Arahkan mata audiens langsung ke 1 tindakan konversi bernilai tertinggi.',
+      tag: 'KONVERSI'
+    }
+  ];
+
+  let takeawayBox = {
+    label: 'FORMULA EKSEKUSI',
+    formula: 'Clarity Headline + Validasi Kredibilitas Cepat + Speed Responsif = High Conversion Trust',
+    metric: 'GOAL: 3.4X CLOSING'
+  };
+
+  if (lower.includes('domain') || lower.includes('nama')) {
+    mainTitle = 'BLUEPRINT MEMILIH DOMAIN WEBSITE BISNIS TERPERCAYA';
+    subtitle = 'STRATEGI BRAND ASSET';
+    headerBadge = 'ASSET BLUEPRINT';
+    highlightBanner = 'HIGH TRUST';
+    points = [
+      { number: '01', title: 'EKSTENSI .COM SEBAGAI DEFAULT', desc: 'Konsumen secara reflek mengetik .com. Ekstensi asing atau gratisan memicu persepsi scam dan menurunkan closing rate.', tag: 'KREDIBILITAS' },
+      { number: '02', title: 'RADIO TEST (MUDAH DIUCAPKAN)', desc: 'Pastikan nama mudah dieja saat ditelepon tanpa perlu klarifikasi huruf ganda, tanda hubung (-), atau angka berbelit.', tag: 'USABILITY' },
+      { number: '03', title: 'SELARASKAN USERNAME MEDIA SOSIAL', desc: 'Sinkronisasi handle Instagram, TikTok, dan domain web agar brand tampil solid dan tidak diragukan calon buyer.', tag: 'OMNICHANNEL' },
+      { number: '04', title: 'LINDUNGI VARIASI TYPO UTAMA', desc: 'Amankan variasi ejaan umum sebelum kompetitor membajak traffic organik bisnis Anda.', tag: 'PROTEKSI' }
+    ];
+    takeawayBox = {
+      label: 'RUMUS DOMAIN JUARA',
+      formula: 'Singkat (< 12 Karakter) + Ekstensi .com + Selaras Akun Medsos + Lolos Tes Dengar',
+      metric: 'BENCHMARK: 100% RECALL'
+    };
+  } else if (lower.includes('umkm') || lower.includes('boncos') || lower.includes('kesalahan')) {
+    mainTitle = 'AUDIT KESALAHAN FATAL WEBSITE UMKM YANG MEMBUNUH SALES';
+    subtitle = 'DETEKSI KEBOCORAN TRAFFIC';
+    headerBadge = 'DIAGNOSIS 2026';
+    highlightBanner = 'STOP RUGI';
+    points = [
+      { number: '01', title: 'TRAFFIC DIIKLANKAN KE WEB LEMOT', desc: 'Membakar budget iklan ke halaman yang loadingnya > 3 detik sama dengan membuang 60% anggaran langsung ke tong sampah.', tag: 'BUDGET LEAK' },
+      { number: '02', title: 'TIDAK MENJAWAB "APA UNTUNGNYA BUAT SAYA"', desc: 'Website hanya membanggakan profil perusahaan, bukan mengurai solusi nyata untuk problem spesifik calon pelanggan.', tag: 'COPYWRITING' },
+      { number: '03', title: 'TOMBOL ORDER WHATSAPP TERSEMBUNYI', desc: 'Perilaku konsumen lokal menginginkan respon cepat. Tombol WhatsApp melayang meningkatkan respons closing hingga 48%.', tag: 'ACCESSIBILITY' },
+      { number: '04', title: 'TAMPILAN AMATIR RUSAK DI SMARTPHONE', desc: 'Desain teks tumpang tindih dan gambar pecah seketika menghancurkan keyakinan buyer untuk transfer uang.', tag: 'UI/UX RISK' }
+    ];
+    takeawayBox = {
+      label: 'SOLUSI PERBAIKAN KILAT',
+      formula: 'Loading < 2s + Headline Berorientasi Solusi + Floating WhatsApp CTA + Layout Mobile Flawless',
+      metric: 'TARGET: HEMAT BUDGET 50%'
+    };
+  }
+
   return {
-    mainTitle: cleanPrompt.length > 50 ? cleanPrompt.substring(0, 50).toUpperCase() : cleanPrompt.toUpperCase(),
-    highlightBanner: theme === 'foresttype' ? 'MO\nLEN' : theme === 'techhook' ? 'BEDA LEVEL' : 'PRO TIPS',
-    subtitle: 'PANDUAN PRAKTIS 2026',
-    headerBadge: theme === 'techhook' ? 'CLAUDE CODE' : theme === 'foresttype' ? 'TYPOGRAPHY' : 'HIGH IMPACT INSIGHT',
-    points: [
-      {
-        number: '01',
-        title: 'FOKUS PADA FIRST IMPRESSION',
-        desc: 'Pengunjung hanya butuh 3 detik untuk memutuskan tinggal atau pergi. Desain visual yang bersih dan headline tegas adalah kunci utama.',
-        tag: 'CRITICAL'
-      },
-      {
-        number: '02',
-        title: 'OPTIMASI SPEED & MOBILE-FIRST',
-        desc: 'Lebih dari 80% traffic berasal dari smartphone. Kecepatan loading di bawah 2 detik melipatgandakan peluang konversi prospek.',
-        tag: 'PERFORMANCE'
-      },
-      {
-        number: '03',
-        title: 'CLEAR CALL TO ACTION (CTA)',
-        desc: 'Arahkan pengunjung secara gamblang ke aksi berikutnya: chat WhatsApp, pesan demo, atau beli langsung tanpa navigasi berbelit.',
-        tag: 'CONVERSION'
-      }
-    ],
-    footer: theme === 'techhook' ? '@terl.studio' : theme === 'foresttype' ? 'Penggunaan : Personal Use' : 'KAMI MEMBANGUN DIGITAL IDENTITY YANG MENGHASILKAN PROFIT',
+    mainTitle,
+    highlightBanner,
+    subtitle,
+    headerBadge,
+    points,
+    takeawayBox,
+    densityMode: 'comprehensive',
+    footer: theme === 'techhook' ? '@terl.studio' : theme === 'foresttype' ? 'Penggunaan : Personal Use' : '< GROWTH YOUR BRANDING >',
     subLink: theme === 'techhook' ? 'Geser ❯' : theme === 'foresttype' ? 'Download : freefonts.io' : undefined,
-    caption: `🔥 ${cleanPrompt} — Simak 3 fondasi penting ini sebelum terlambat!\n\nDi era serba cepat, audiens Anda tidak membaca melainkan memindai (skimming). Jika pesan Anda rumit, mereka akan berpindah ke kompetitor.\n\nSimpan postingan ini agar tidak lupa! 📌\n\nBagikan pendapat Anda di kolom komentar 👇`,
+    caption: `🔥 ${p}\n\nBanyak orang memandang remeh hal ini sampai akhirnya menyadari konversi bisnis mereka stuck dan budget marketing terbuang sia-sia.\n\nBerikut ringkasan lengkap framework actionable yang kami terapkan di TERL Web Studio:\n\n1️⃣ ${points[0].title}: ${points[0].desc}\n2️⃣ ${points[1].title}: ${points[1].desc}\n3️⃣ ${points[2].title}: ${points[2].desc}\n${points[3] ? `4️⃣ ${points[3].title}: ${points[3].desc}\n` : ''}\n💡 ${takeawayBox.label}: ${takeawayBox.formula} (${takeawayBox.metric})\n\n📌 Simpan panduan ini agar bisa diaudit kembali bersama tim Anda!\nKetik pendapat Anda di kolom komentar 👇`,
     hashtags: [
-      '#webdesign', '#webdevelopment', '#instagramtips', '#agencylife',
-      '#digitalbranding', '#bisnisonline', '#umkmindonesia', '#marketingtips',
-      '#brandingstrategi', '#contentcreator', '#carouselinstagram', '#terlwebstudio'
+      '#terlwebstudio', '#growtyourbranding', '#webagency', '#digitalbranding',
+      '#growthmarketing', '#bisnisonline', '#umkmindonesia', '#uidesign', '#copywritingtips', '#conversionrate'
     ]
   };
 }
 
-function getFallbackCarousel(prompt: string, slideCount: number = 5) {
+// Fallback carousel with adaptive specialized slides
+function getFallbackCarousel(prompt: string, slideCount: number = 6) {
   const cleanPrompt = prompt.trim() || 'Strategi Desain Web Modern yang Menghasilkan';
   const slides = [];
 
-  // Cover
+  // Slide 1: Cover (Hook & Curiosity)
   slides.push({
+    id: 'slide-1',
     slideType: 'cover',
-    badge: 'SLIDE 01 // OVERVIEW',
+    badge: 'SLIDE 01 // PRO STRATEGY',
     title: cleanPrompt.toUpperCase(),
     highlightBanner: 'BEDA LEVEL',
-    description: 'Framework teruji untuk menaikkan reputasi brand dan konversi penjualan.',
+    description: 'Framework komprehensif dari TERL Web Studio untuk membangun digital presence berbobot tinggi.',
     statNumber: '10X',
-    statLabel: 'Peningkatan Trust'
+    statLabel: 'Brand Authority',
+    customFooter: '< GROWTH YOUR BRANDING >'
   });
 
-  // Body slides
-  const bodyPoints = [
-    { title: 'Masalah: Website Terlalu Ramai & Lambat', desc: 'Banyak bisnis memasukkan semua info sekaligus hingga pengunjung bingung dan bounce rate naik drastis.' },
-    { title: 'Solusi 1: Hero Section yang To-The-Point', desc: 'Jelaskan dalam 1 kalimat apa produk Anda, siapa pasarnya, dan apa masalah yang Anda selesaikan.' },
-    { title: 'Solusi 2: Social Proof Nyata di Atas Lipatan', desc: 'Tampilkan testimoni, logo klien ternama, atau rating bintang tepat sebelum scroll pertama.' },
-    { title: 'Solusi 3: Responsive Micro-Interactions', desc: 'Berikan feedback sentuhan halus dan visual cues yang memandu mata pembaca menuju CTA.' }
-  ];
-
-  for (let i = 0; i < Math.min(slideCount - 2, bodyPoints.length); i++) {
-    slides.push({
-      slideType: 'insight',
-      badge: `STEP 0${i + 2} // IMPLEMENTATION`,
-      title: bodyPoints[i].title.toUpperCase(),
-      description: bodyPoints[i].desc,
-      statNumber: `0${i + 1}`,
-      statLabel: 'KEY FOCUS'
-    });
-  }
-
-  // CTA Slide
+  // Slide 2: Problem Diagnosis
   slides.push({
+    id: 'slide-2',
+    slideType: 'problem',
+    badge: 'DIAGNOSA // ROOT CAUSE',
+    title: 'KENAPA 87% BISNIS GAGAL DI FASE INI?',
+    description: 'Sebagian besar brand fokus pada estetika semata tanpa memikirkan arsitektur pesan dan alur konversi psikologis.',
+    problemData: {
+      warningTag: 'FATAL TRAP',
+      painPoint: 'Tampilan website penuh dekorasi rumit namun tidak jelas apa masalah yang diselesaikan.',
+      impactText: 'Akibatnya pengunjung bingung, bounce rate melonjak, dan budget marketing menguap.'
+    },
+    statNumber: '87%',
+    statLabel: 'Traffic Mental',
+    customFooter: '< GROWTH YOUR BRANDING >'
+  });
+
+  // Slide 3: Framework Core Pillars
+  slides.push({
+    id: 'slide-3',
+    slideType: 'framework',
+    badge: 'METODOLOGI // 3 PILAR',
+    title: 'FRAMEWORK EKSEKUSI TERUJI',
+    description: '3 Fondasi terintegrasi yang wajib disiapkan sebelum meluncurkan kampanye branding digital.',
+    frameworkSteps: [
+      { stepNumber: '01', stepTitle: 'CLARITY FIRST', stepDetail: 'Jelaskan proposisi nilai dalam kalimat lugas pada 3 detik pertama.' },
+      { stepNumber: '02', stepTitle: 'SPEED & ACCESSIBILITY', stepDetail: 'Optimasi mobile ultra-ringan dengan loading di bawah 1.5 detik.' },
+      { stepNumber: '03', stepTitle: 'SEAMLESS CONVERSION', stepDetail: 'Hadirkan 1 jalur CTA tanpa friksi menuju WhatsApp atau checkout.' }
+    ],
+    customFooter: '< GROWTH YOUR BRANDING >'
+  });
+
+  // Slide 4: Comparison (Do vs Don't)
+  slides.push({
+    id: 'slide-4',
+    slideType: 'comparison',
+    badge: 'KOMPARASI // AUDIT NYATA',
+    title: 'POLA PIKIR AMATIR VS POLA PIKIR PRO',
+    description: 'Bandingkan pendekatan yang membakar biaya dengan pendekatan yang menghasilkan profit nyata.',
+    comparisonData: {
+      dontTitle: 'PENDEKATAN LAMA (HINDARI)',
+      dontDesc: 'Menjejalkan semua katalog produk di halaman depan dengan copy berbelit dan animasi berat.',
+      doTitle: 'PENDEKATAN STRATEGIS (LAKUKAN)',
+      doDesc: 'Fokus pada 1 pain point utama pelanggan dengan bukti sosial nyata dan micro-interaction responsif.'
+    },
+    customFooter: '< GROWTH YOUR BRANDING >'
+  });
+
+  // Slide 5: Action Checklist
+  slides.push({
+    id: 'slide-5',
+    slideType: 'checklist',
+    badge: 'CHECKLIST // PRAKTIK LANGSUNG',
+    title: 'DAFTAR VERIFIKASI SEBELUM LAUNCHING',
+    description: 'Pastikan 4 elemen penting ini tercentang sebelum Anda merilis materi promosi ke publik.',
+    checklistItems: [
+      { text: 'Headline langsung mengutarakan benefit terbesar bagi pembeli', tag: 'COPY', done: true },
+      { text: 'Loading halaman lolos skor Google PageSpeed > 90', tag: 'PERFORMA', done: true },
+      { text: 'Testimoni pelanggan diletakkan sebelum scroll lipatan pertama', tag: 'TRUST', done: true },
+      { text: 'Nomor WhatsApp dan link navigasi teruji aktif tanpa error', tag: 'CLOSING', done: true }
+    ],
+    customFooter: '< GROWTH YOUR BRANDING >'
+  });
+
+  // Slide 6: CTA (Action & Conversion)
+  slides.push({
+    id: 'slide-6',
     slideType: 'cta',
-    badge: 'FINAL STEP // ACTION',
-    title: 'SIAP UPGRADE BRAND DIGITAL ANDA?',
-    description: 'Jangan biarkan bisnis Anda terlihat amatir di mata calon investor & pelanggan berharga.',
+    badge: 'ACTION STEP // PARTNER',
+    title: 'SIAP MEMBAWA BRAND ANDA KE LEVEL BERIKUTNYA?',
+    description: 'Kami di TERL Web Studio membantu Anda merancang website & identitas digital yang tidak hanya estetik, tapi juga melipatgandakan profit.',
     statNumber: 'TERL',
-    statLabel: 'STUDIO'
+    statLabel: 'STUDIO',
+    customFooter: '< GROWTH YOUR BRANDING >'
   });
 
   return {
     topic: cleanPrompt,
-    slides,
-    caption: `✨ Geser sampai akhir untuk melihat framework lengkap: "${cleanPrompt}"!\n\nBanyak yang mengabaikan detail kecil ini padahal efeknya sangat signifikan pada performa bisnis.\n\nKetik "MAU" di komentar kalau mau template checklist gratisnya! 💬\n\n📌 Save biar bisa dipraktekkan nanti.`,
-    hashtags: ['#carouseltips', '#instagramstrategy', '#webagency', '#bisnisdigital', '#growthhack', '#uidesign', '#contentmarketing']
+    slides: slides.slice(0, Math.max(3, Math.min(slideCount, 7))),
+    caption: `✨ Geser sampai tuntas untuk mempelajari framework lengkap: "${cleanPrompt}"!\n\nDi dunia serba cepat, pemenang bukan yang paling berisik, tapi yang pesannya paling jelas dan eksekusinya paling rapi.\n\n📌 Simpan postingan ini untuk dijadikan checklist bersama tim Anda.\n\nKetik "MAU AUDIT" di komentar jika Anda ingin kami bedah performa website bisnis Anda! 💬`,
+    hashtags: ['#carouseltips', '#growthbranding', '#terlwebstudio', '#webagency', '#contentstrategy', '#bisnisdigital', '#uidesign', '#marketingframework']
   };
 }
 
-// 1. Single Feed Generator Endpoint
+// 1. Single Feed Generator Endpoint (Complex Reasoning: High Density 1-Feed Masterclass)
 app.post('/api/generate-feed', async (req: Request, res: Response) => {
   const { prompt, theme = 'brutalism', tone = 'professional', language = 'id' } = req.body;
 
@@ -151,47 +256,63 @@ app.post('/api/generate-feed', async (req: Request, res: Response) => {
   const ai = getGeminiClient();
 
   if (!ai) {
-    // Provide quality fallback
     return res.json({ success: true, data: getFallbackFeed(prompt, theme), isFallback: true });
   }
 
   try {
     const langInstruction = language === 'en' ? 'English' : 'Indonesian (Bahasa Indonesia)';
-    const promptText = `Anda adalah Lead Creative Director & Social Media Strategist dari agensi branding terkemuka (TERL Web Studio).
-Tugas Anda: Buat konten visual Instagram Feed profesional, tajam, bernilai tinggi, dan viral berdasarkan topik pengguna:
-Topik: "${prompt}"
-Visual Theme Pilihan: ${theme}
+    const promptText = `Anda adalah Lead Creative Director & Master Brand Strategist dari agensi elit TERL Web Studio.
+PENGGUNA MEMBERIKAN PROMPT SINGKAT: "${prompt}"
+
+TUGAS KHUSUS ANDA:
+Lakukan penalaran yang sangat kompleks, kreatif, dan tajam (deep creative reasoning).
+Prompt singkat ini harus diuraikan menjadi SATU (1) POSTINGAN INSTAGRAM FEED UTUH yang MEMUAT SELURUH INFORMASI DAN INTISARI LENGKAP (seperti infografis / cheat-sheet masterclass bernilai tinggi).
+Jangan berikan poin-poin dangkal atau klise. Buka wawasan pembaca dengan sudut pandang strategis, benchmark metrik nyata, dan solusi konkret yang bisa langsung dieksekusi.
+
+Visual Theme: ${theme}
 Tone of Voice: ${tone}
 Bahasa: ${langInstruction}
 
-Kembalikan respon JSON VALID TANPA MARKDOWN format:
+Kembalikan respon JSON VALID TANPA MARKDOWN format persis seperti ini:
 {
-  "mainTitle": "Judul headline utama yang sangat tajam, eye-catching, berbobot (maksimal 8-10 kata)",
-  "highlightBanner": "Frasa sorotan 1-3 kata untuk banner khusus (contoh: BEDA LEVEL / RESMI / PRO TIPS / MO\\nLEN)",
-  "subtitle": "Sub-heading atau hook pendek (maksimal 5 kata)",
-  "headerBadge": "Teks badge status di atas (contoh: STRATEGI UTAMA / PRO TIPS / CRITICAL / 2026 EDITION)",
+  "mainTitle": "Headline utama yang tegas, provokatif, berwibawa (maksimal 7-10 kata, tanpa awalan 'HEADLINE:')",
+  "highlightBanner": "Frasa sorotan 1-3 kata untuk banner/aksen (contoh: BEDA LEVEL / HIGH TRUST / STOP RUGI / PRO TIPS)",
+  "subtitle": "Konteks atau sub-heading tajam (contoh: BLUEPRINT LENGKAP 2026 // MASTERPLAY)",
+  "headerBadge": "Kategori status badge (contoh: MASTERCLASS 2026 / HIGH IMPACT / CHEAT-SHEET)",
   "points": [
     {
       "number": "01",
-      "title": "Judul Poin 1 yang padat & impactful",
-      "desc": "Penjelasan ringkas 1-2 kalimat padat solusi atau insight nyata",
-      "tag": "Kata kunci badge kecil (misal: FOUNDATION / METRIC / ACTION)"
+      "title": "Pilar 1: Judul padat berorientasi aksi nyata",
+      "desc": "Penjelasan mendalam 1-2 kalimat sarat insight, psikologi konsumen, atau alasan mendasar.",
+      "tag": "KATA KUNCI (misal: PSIKOLOGI / PERFORMA / STRATEGI)"
     },
     {
       "number": "02",
-      "title": "Judul Poin 2 yang padat & impactful",
-      "desc": "Penjelasan ringkas 1-2 kalimat padat solusi atau insight nyata",
-      "tag": "Kata kunci badge kecil"
+      "title": "Pilar 2: Judul padat berorientasi aksi nyata",
+      "desc": "Penjelasan mendalam 1-2 kalimat sarat insight, angka metrik, atau teknis.",
+      "tag": "KATA KUNCI"
     },
     {
       "number": "03",
-      "title": "Judul Poin 3 yang padat & impactful",
-      "desc": "Penjelasan ringkas 1-2 kalimat padat solusi atau insight nyata",
-      "tag": "Kata kunci badge kecil"
+      "title": "Pilar 3: Judul padat berorientasi aksi nyata",
+      "desc": "Penjelasan mendalam 1-2 kalimat sarat insight.",
+      "tag": "KATA KUNCI"
+    },
+    {
+      "number": "04",
+      "title": "Pilar 4: Eksekusi penutup / proteksi risiko",
+      "desc": "Penjelasan langkah kunci agar hasil maksimal.",
+      "tag": "KATA KUNCI (misal: CLOSING / METRIK / VALIDASI)"
     }
   ],
-  "footer": "Tagline footer branding berkesan kuat (maksimal 7 kata)",
-  "caption": "Caption Instagram lengkap dengan hook emosional, isi pembahasan, call-to-action (simpan/komen), dan emoji proporsional",
+  "takeawayBox": {
+    "label": "RUMUS / FORMULA EKSEKUSI",
+    "formula": "Rumusan singkat 1 kalimat yang merangkum seluruh strategi ini dalam formula konkret",
+    "metric": "Target metrik hasil (misal: BENCHMARK: < 1.5S / GOAL: 3X CLOSING)"
+  },
+  "densityMode": "comprehensive",
+  "footer": "< GROWTH YOUR BRANDING >",
+  "caption": "Caption Instagram mendalam dengan storytelling, membedah keempat pilar secara terurai, CTA simpan dan diskusi, serta emoji proporsional",
   "hashtags": ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5", "#tag6", "#tag7", "#tag8", "#tag9", "#tag10"]
 }`;
 
@@ -218,15 +339,15 @@ Kembalikan respon JSON VALID TANPA MARKDOWN format:
   }
 });
 
-// 2. Carousel Generator Endpoint
+// 2. Carousel Generator Endpoint (Complex Reasoning: Multi-Slide Adaptive Architecture)
 app.post('/api/generate-carousel', async (req: Request, res: Response) => {
-  const { prompt, slideCount = 5, targetAudience = 'Entrepreneurs & Creatives', language = 'id', theme = 'brutalism' } = req.body;
+  const { prompt, slideCount = 6, targetAudience = 'Entrepreneurs & Creatives', language = 'id', theme = 'brutalism' } = req.body;
 
   if (!prompt || typeof prompt !== 'string') {
     return res.status(400).json({ error: 'Prompt is required' });
   }
 
-  const numSlides = Math.min(Math.max(Number(slideCount) || 5, 3), 7);
+  const numSlides = Math.min(Math.max(Number(slideCount) || 6, 4), 7);
   const ai = getGeminiClient();
 
   if (!ai) {
@@ -235,31 +356,96 @@ app.post('/api/generate-carousel', async (req: Request, res: Response) => {
 
   try {
     const langInstruction = language === 'en' ? 'English' : 'Indonesian (Bahasa Indonesia)';
-    const promptText = `Rancang konten Instagram Carousel berjumlah tepat ${numSlides} slide untuk topik:
-"${prompt}"
-Target Pembaca: ${targetAudience}
+    const promptText = `Anda adalah Creative Storytelling Director & Carousel Architect dari TERL Web Studio.
+PENGGUNA MEMBERIKAN PROMPT SINGKAT: "${prompt}"
+
+TUGAS KHUSUS ANDA:
+Lakukan penalaran kompleks dan kreatif. Uraikan topik singkat ini ke dalam ${numSlides} slide Instagram Carousel yang SALING TERHUBUNG SECARA STRATEGIS.
+PENTING SEKALI: Elemen desain di setiap slide HARUS MENYESUAIKAN JENIS INFORMASI yang disampaikan agar dinamis dan kaya elemen visual:
+- Slide 1: tipe 'cover' -> Hook provokatif, headline besar, statNumber & statLabel dampak.
+- Slide 2: tipe 'problem' -> Membongkar akar masalah atau jebakan fatal yang dihadapi audiens, sertakan problemData (warningTag, painPoint, impactText).
+- Slide 3: tipe 'framework' -> Metodologi 3 langkah / pilar solusi, sertakan frameworkSteps (array 3 step dengan stepNumber, stepTitle, stepDetail).
+- Slide 4: tipe 'comparison' -> Komparasi Do vs Don't (apa yang salah vs cara benar), sertakan comparisonData (dontTitle, dontDesc, doTitle, doDesc).
+- Slide 5: tipe 'checklist' -> Actionable checklist verifikasi langsung, sertakan checklistItems (array 3-4 item dengan text, tag, done).
+- Slide Terakhir (Slide ${numSlides}): tipe 'cta' -> Slide penutup, ajakan simpan, komen, dan penawaran konsultasi TERL Web Studio.
+
+Target Audiens: ${targetAudience}
 Bahasa: ${langInstruction}
 
-Struktur slide yang dibutuhkan:
-- Slide 1: Cover / Hook (Headline bombastis berkelas + curiosity hook)
-- Slide 2 s/d ${numSlides - 1}: Isi Insight / Actionable steps / Solusi konkret
-- Slide ${numSlides}: Slide Penutup / Call to Action (Ajakan follow, save, share, atau komen)
-
-Kembalikan format JSON:
+Kembalikan format JSON VALID TANPA MARKDOWN:
 {
   "topic": "${prompt}",
   "slides": [
     {
-      "slideType": "cover" atau "insight" atau "cta",
-      "badge": "Label atas (misal: SLIDE 01 // FRAMEWORK)",
-      "title": "Headline slide",
-      "description": "Keterangan inti 1-2 kalimat yang mudah dibaca saat scrolling cepat",
-      "statNumber": "Nomor atau angka/simbol highlight (misal: 01, 80%, 3X, TERL)",
-      "statLabel": "Label kecil untuk angka"
+      "slideType": "cover",
+      "badge": "SLIDE 01 // OVERVIEW",
+      "title": "Headline Hook",
+      "description": "Deskripsi pengantar yang memantik rasa penasaran",
+      "statNumber": "10X",
+      "statLabel": "Brand Impact",
+      "customFooter": "< GROWTH YOUR BRANDING >"
+    },
+    {
+      "slideType": "problem",
+      "badge": "DIAGNOSA // ROOT CAUSE",
+      "title": "Judul masalah yang sering diabaikan",
+      "description": "Keterangan inti mengapa masalah ini fatal",
+      "problemData": {
+        "warningTag": "RISIKO FATAL",
+        "painPoint": "Penyebab utama kegagalan di lapangan",
+        "impactText": "Dampak buruk jika dibiarkan tanpa perbaikan"
+      },
+      "customFooter": "< GROWTH YOUR BRANDING >"
+    },
+    {
+      "slideType": "framework",
+      "badge": "METODOLOGI // FONDASI",
+      "title": "Judul Framework Solusi",
+      "description": "Penjelasan ringkas alur kerja",
+      "frameworkSteps": [
+        { "stepNumber": "01", "stepTitle": "Langkah 1", "stepDetail": "Detail eksekusi langkah 1" },
+        { "stepNumber": "02", "stepTitle": "Langkah 2", "stepDetail": "Detail eksekusi langkah 2" },
+        { "stepNumber": "03", "stepTitle": "Langkah 3", "stepDetail": "Detail eksekusi langkah 3" }
+      ],
+      "customFooter": "< GROWTH YOUR BRANDING >"
+    },
+    {
+      "slideType": "comparison",
+      "badge": "KOMPARASI // AUDIT NYATA",
+      "title": "Judul komparasi Do vs Don't",
+      "description": "Penjelasan mengapa pendekatan pro berbeda",
+      "comparisonData": {
+        "dontTitle": "POLA SALAH (HINDARI)",
+        "dontDesc": "Kebiasaan lama yang merugikan bisnis",
+        "doTitle": "POLA BENAR (TERAPKAN)",
+        "doDesc": "Standar baru yang terbukti efektif"
+      },
+      "customFooter": "< GROWTH YOUR BRANDING >"
+    },
+    {
+      "slideType": "checklist",
+      "badge": "CHECKLIST // VERIFIKASI",
+      "title": "Checklist Kunci Sebelum Eksekusi",
+      "description": "Pastikan seluruh kriteria ini terpenuhi",
+      "checklistItems": [
+        { "text": "Poin checklist 1", "tag": "AUDIT", "done": true },
+        { "text": "Poin checklist 2", "tag": "SPEED", "done": true },
+        { "text": "Poin checklist 3", "tag": "COPY", "done": true }
+      ],
+      "customFooter": "< GROWTH YOUR BRANDING >"
+    },
+    {
+      "slideType": "cta",
+      "badge": "ACTION STEP // TERL STUDIO",
+      "title": "SIAP MELIPATGANDAKAN HASIL BRAND ANDA?",
+      "description": "Simpan postingan ini dan hubungi TERL Web Studio untuk membangun identitas digital bisnis Anda.",
+      "statNumber": "TERL",
+      "statLabel": "STUDIO",
+      "customFooter": "< GROWTH YOUR BRANDING >"
     }
   ],
-  "caption": "Caption Instagram storytelling yang cocok untuk carousel ini",
-  "hashtags": ["#tag1", "#tag2", "#tag3", "#tag4", "#tag5", "#tag6", "#tag7", "#tag8"]
+  "caption": "Caption Instagram storytelling lengkap dengan pembahasan per slide, hook pembuka, dan CTA konversi.",
+  "hashtags": ["#carouseltips", "#growthbranding", "#terlwebstudio", "#webagency", "#uidesign", "#digitalstrategy", "#marketingframework", "#kontenkreatif"]
 }`;
 
     const response = await ai.models.generateContent({

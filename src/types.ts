@@ -32,6 +32,9 @@ export type ElementKey =
   | 'point_0'
   | 'point_1'
   | 'point_2'
+  | 'point_3'
+  | 'formula'
+  | 'checklist'
   | 'stat'
   | 'comparison'
   | 'footer';
@@ -46,7 +49,7 @@ export type ElementPositions = Partial<Record<ElementKey, ElementPosition>>;
 
 export interface SlideItem {
   id: string;
-  slideType: 'cover' | 'insight' | 'points' | 'quote' | 'comparison' | 'cta' | 'visual' | 'showcase';
+  slideType: 'cover' | 'insight' | 'problem' | 'framework' | 'comparison' | 'metric' | 'checklist' | 'cta' | 'visual' | 'showcase' | 'points' | 'quote';
   badge: string;
   title: string;
   description: string;
@@ -56,6 +59,28 @@ export interface SlideItem {
   statLabel?: string;
   customFooter?: string;
   subLink?: string;
+  // Adaptive slide components
+  problemData?: {
+    warningTag?: string;
+    painPoint: string;
+    impactText: string;
+  };
+  comparisonData?: {
+    dontTitle?: string;
+    dontDesc: string;
+    doTitle?: string;
+    doDesc: string;
+  };
+  checklistItems?: Array<{
+    text: string;
+    tag?: string;
+    done?: boolean;
+  }>;
+  frameworkSteps?: Array<{
+    stepNumber: string;
+    stepTitle: string;
+    stepDetail: string;
+  }>;
   // Visual Element & Photo integration
   imageUrl?: string;
   imageKeyword?: string;
@@ -81,12 +106,20 @@ export interface BrandSettings {
   showFooterBar: boolean;
 }
 
+export interface TakeawayBox {
+  label: string;
+  formula: string;
+  metric?: string;
+}
+
 export interface FeedContent {
   mainTitle: string;
   subtitle: string;
   headerBadge: string;
   highlightBanner?: string;
   points: FeedPoint[];
+  takeawayBox?: TakeawayBox;
+  densityMode?: 'comprehensive' | 'standard';
   footer: string;
   caption: string;
   hashtags: string[];

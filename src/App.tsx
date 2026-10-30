@@ -56,31 +56,43 @@ import {
 } from 'lucide-react';
 
 const DEFAULT_FEED_CONTENT: FeedContent = {
-  mainTitle: 'TIPS MEMILIH DOMAIN WEBSITE YANG TEPAT UNTUK BISNIS',
-  subtitle: 'PANDUAN PRAKTIS 2026',
-  headerBadge: 'HIGH IMPACT INSIGHT',
+  mainTitle: 'BLUEPRINT MEMILIH DOMAIN WEBSITE BISNIS TERPERCAYA',
+  subtitle: 'PANDUAN LENGKAP 2026 // MASTERPLAY',
+  headerBadge: 'HIGH DENSITY INSIGHT',
   points: [
     {
       number: '01',
-      title: 'GUNAKAN EKSTENSI .COM',
-      desc: 'Lebih dipercaya dan mudah diingat audiens global.',
-      tag: 'TRUST'
+      title: 'PRIORITASKAN EKSTENSI .COM',
+      desc: 'Konsumen secara reflek mengetik .com. Ekstensi asing atau gratisan memicu keraguan kredibilitas.',
+      tag: 'KREDIBILITAS'
     },
     {
       number: '02',
-      title: 'SINGKAT & MUDAH DIKETIK',
-      desc: 'Hindari penggunaan tanda hubung atau ejaan rumit.',
+      title: 'LOLOS RADIO TEST (MUDAH DIUCAPKAN)',
+      desc: 'Pastikan nama mudah dieja saat ditelepon tanpa perlu klarifikasi tanda hubung (-) atau ejaan rumit.',
       tag: 'USABILITY'
     },
     {
       number: '03',
-      title: 'SESUAI DENGAN NAMA BRAND',
-      desc: 'Membangun identitas digital yang konsisten.',
-      tag: 'BRANDING'
+      title: 'SELARASKAN USERNAME MEDSOS',
+      desc: 'Sinkronisasi handle Instagram, TikTok, dan domain web agar brand tampil solid dan terpercaya.',
+      tag: 'OMNICHANNEL'
+    },
+    {
+      number: '04',
+      title: 'LINDUNGI VARIASI TYPO UTAMA',
+      desc: 'Amankan variasi ejaan umum sebelum kompetitor membajak traffic pencarian organik bisnis Anda.',
+      tag: 'PROTEKSI'
     }
   ],
+  takeawayBox: {
+    label: 'RUMUS DOMAIN JUARA',
+    formula: 'Singkat (< 12 Huruf) + Ekstensi .com + Sinkron Akun Medsos + Lolos Tes Dengar',
+    metric: 'BENCHMARK: 100% RECALL'
+  },
+  densityMode: 'comprehensive',
   footer: '< GROWTH YOUR BRANDING >',
-  caption: `🌐 Tips Memilih Domain Website yang Tepat untuk Bisnis!\n\nBanyak pemula salah memilih domain yang terlalu panjang atau sulit dieja, berakibat pada hilangnya calon pelanggan potensial.\n\nSimpan 3 tips penting ini sebelum membeli domain baru! 📌\n\nKomen pendapat Anda di bawah ya! 👇`,
+  caption: `🌐 Tips Memilih Domain Website yang Tepat untuk Bisnis!\n\nBanyak pemula salah memilih domain yang terlalu panjang atau sulit dieja, berakibat pada hilangnya calon pelanggan potensial.\n\nSimpan 4 tips penting ini sebelum membeli domain baru! 📌\n\nKomen pendapat Anda di bawah ya! 👇`,
   hashtags: [
     '#terlwebstudio', '#growtyourbranding', '#webdesign', '#webdevelopment', '#instagramfeed', '#agencylife',
     '#digitalbranding', '#bisnisonline', '#umkmindonesia'
@@ -91,51 +103,77 @@ const DEFAULT_CAROUSEL_SLIDES: SlideItem[] = [
   {
     id: 'slide-1',
     slideType: 'cover',
-    badge: 'SLIDE 01 // OVERVIEW',
-    title: 'TIPS MEMILIH DOMAIN WEBSITE BISNIS',
+    badge: 'SLIDE 01 // PRO STRATEGY',
+    title: 'BLUEPRINT MEMILIH DOMAIN WEBSITE BISNIS',
     description: 'Framework teruji memilih domain yang kredibel, mudah diingat, dan melipatgandakan konversi penjualan.',
     statNumber: '10X',
-    statLabel: 'Brand Trust',
+    statLabel: 'Brand Authority',
     customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-2',
-    slideType: 'insight',
-    badge: 'LANGKAH 01 // TRUST',
-    title: 'PRIORITASKAN EKSTENSI .COM',
-    description: 'Mayoritas pengguna internet secara reflek mengetik .com. Jangan buat pelanggan ragu dengan ekstensi aneh yang asing bagi mereka.',
-    statNumber: '01',
-    statLabel: 'GOLD STANDARD',
+    slideType: 'problem',
+    badge: 'DIAGNOSA // ROOT CAUSE',
+    title: 'KENAPA BANYAK BISNIS KEHILANGAN TRAFFIC?',
+    description: 'Banyak pemilik bisnis terjebak membeli domain murah dengan ekstensi aneh tanpa memikirkan psikologi pembeli.',
+    problemData: {
+      warningTag: 'FATAL PITFALL',
+      painPoint: 'Domain berbelit dengan tanda strip (-), angka acak, atau ekstensi yang tampak mencurigakan.',
+      impactText: 'Calon pembeli ragu transfer uang dan traffic organik menguap ke kompetitor.'
+    },
+    statNumber: '68%',
+    statLabel: 'Drop-off Rate',
     customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-3',
-    slideType: 'comparison',
-    badge: 'ANALISIS // DO VS DONT',
-    title: 'JANGAN SAMPAI SALAH KETIK',
-    description: 'Hindari kombinasi angka dan tanda hubung (-). Pastikan nama domain bisa diucapkan lewat telepon tanpa salah dengar.',
-    statNumber: '02',
-    statLabel: 'SIMPLICITY',
+    slideType: 'framework',
+    badge: 'METODOLOGI // 3 PILAR',
+    title: '3 STANDAR EMAS PEMILIHAN DOMAIN',
+    description: 'Terapkan ketiga parameter ini sebelum menekan tombol checkout di registrar domain.',
+    frameworkSteps: [
+      { stepNumber: '01', stepTitle: 'GOLD STANDARD .COM', stepDetail: 'Gunakan .com untuk kepercayaan instan di mata audiens global.' },
+      { stepNumber: '02', stepTitle: 'RADIO TEST PASSED', stepDetail: 'Bisa dieja lancar dalam 3 detik tanpa ada salah dengar.' },
+      { stepNumber: '03', stepTitle: 'HANDLE SYNC READY', stepDetail: 'Amankan nama yang sama di Instagram, TikTok, dan YouTube.' }
+    ],
     customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-4',
-    slideType: 'insight',
-    badge: 'LANGKAH 03 // BRANDING',
-    title: 'SELARASKAN DENGAN HANDLE MEDSOS',
-    description: 'Cek ketersediaan nama di Instagram, TikTok, dan X sebelum membeli domain agar branding Anda seragam.',
-    statNumber: '03',
-    statLabel: 'CONSISTENCY',
+    slideType: 'comparison',
+    badge: 'KOMPARASI // AUDIT NYATA',
+    title: 'POLA SALAH VS STANDAR PROFESIONAL',
+    description: 'Bandingkan kesalahan umum dengan keputusan strategis yang diambil agensi top.',
+    comparisonData: {
+      dontTitle: 'JANGAN PILIH (HINDARI)',
+      dontDesc: 'toko-baju-online-murah-123.xyz (Panjang, terkesan spam, dan sulit diketik ulang).',
+      doTitle: 'PILIHAN JUARA (TERAPKAN)',
+      doDesc: 'tokobaju.com atau namabrand.com (Ringkas, berbobot, dan memancarkan reputasi premium).'
+    },
     customFooter: '< GROWTH YOUR BRANDING >'
   },
   {
     id: 'slide-5',
+    slideType: 'checklist',
+    badge: 'CHECKLIST // PRAKTIK LANGSUNG',
+    title: 'CHECKLIST FINAL SEBELUM MEMBELI',
+    description: 'Pastikan 4 poin ini terverifikasi sebelum Anda mengeluarkan dana.',
+    checklistItems: [
+      { text: 'Tidak melanggar hak cipta / trademark merek lain', tag: 'LEGAL', done: true },
+      { text: 'Riwayat domain bersih dari spam/blacklist masa lalu', tag: 'SECURITY', done: true },
+      { text: 'Username media sosial utama tersedia dan belum diambil', tag: 'BRAND', done: true },
+      { text: 'Panjang nama domain idealnya di bawah 12 karakter', tag: 'UX', done: true }
+    ],
+    customFooter: '< GROWTH YOUR BRANDING >'
+  },
+  {
+    id: 'slide-6',
     slideType: 'cta',
-    badge: 'AKSI // ACTION STEP',
-    title: 'SIMPAN & BAGIKAN KE PARTNER BISNIS',
-    description: 'Ketik "MAU" di komentar kalau mau kami bantu audit nama domain bisnis Anda secara gratis!',
-    statNumber: 'FREE',
-    statLabel: 'AUDIT',
+    badge: 'ACTION STEP // TERL STUDIO',
+    title: 'BINGUNG MENENTUKAN NAMA BRAND & DOMAIN?',
+    description: 'Konsultasikan ide brand digital Anda bersama tim arsitek TERL Web Studio. Kami bantu audit sampai tuntas.',
+    statNumber: 'TERL',
+    statLabel: 'STUDIO',
     customFooter: '< GROWTH YOUR BRANDING >'
   }
 ];
@@ -265,19 +303,25 @@ export default function App() {
         setContent({
           mainTitle: d.mainTitle || prompt.toUpperCase(),
           highlightBanner: d.highlightBanner || content.highlightBanner,
-          subtitle: d.subtitle || 'PANDUAN PRAKTIS 2026',
-          headerBadge: d.headerBadge || 'PRO TIPS',
+          subtitle: d.subtitle || 'PANDUAN LENGKAP 2026 // MASTERPLAY',
+          headerBadge: d.headerBadge || 'HIGH DENSITY INSIGHT',
           points: d.points || content.points,
+          takeawayBox: d.takeawayBox || content.takeawayBox,
+          densityMode: d.densityMode || 'comprehensive',
           footer: '< GROWTH YOUR BRANDING >',
           subLink: d.subLink,
           caption: d.caption || content.caption,
-          hashtags: d.hashtags || content.hashtags
+          hashtags: d.hashtags || content.hashtags,
+          imageUrl: d.imageUrl,
+          imageKeyword: d.imageKeyword,
+          showImage: d.showImage ?? false,
+          imageLayout: d.imageLayout || 'card'
         });
         showToast(
-          'Analisis Selesai!',
+          'Penalaran Selesai!',
           result.source === 'api' 
-            ? 'Konten Feed Instagram berhasil dirumuskan oleh Gemini AI.' 
-            : 'Konten Feed berhasil dirumuskan & siap diposting.',
+            ? 'Seluruh informasi komprehensif berhasil dirumuskan oleh Gemini AI ke dalam 1 Feed!' 
+            : 'Seluruh informasi komprehensif berhasil dirumuskan & siap diposting.',
           'success'
         );
       } else {
@@ -514,12 +558,47 @@ export default function App() {
                 <span>1-Prompt AI Content Engine</span>
               </h1>
               <p className="text-xs text-slate-400 mt-0.5">
-                Ketik topik ide, AI merumuskan headline, poin penting, caption & hashtags.
+                Penalaran kompleks & kreatif otomatis: 1 Feed Lengkap vs Carousel Multi-Slide.
               </p>
             </div>
             <span className="text-[10px] font-mono font-bold uppercase px-2 py-1 bg-amber-400/10 text-amber-400 rounded-lg border border-amber-400/20">
-              {mode === 'single' ? 'Single Post' : 'Carousel Mode'}
+              TERL STUDIO
             </span>
+          </div>
+
+          {/* Segmented Mode Selector (Single 1-Feed vs Carousel) */}
+          <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-950 rounded-2xl border border-slate-800">
+            <button
+              type="button"
+              onClick={() => setMode('single')}
+              className={`py-2 px-3 rounded-xl text-xs font-black transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${
+                mode === 'single'
+                  ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/20'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>1 Feed Post Lengkap</span>
+              </div>
+              <span className="text-[9px] font-normal opacity-80">Muat seluruh info dlm 1 desain</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMode('carousel')}
+              className={`py-2 px-3 rounded-xl text-xs font-black transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer ${
+                mode === 'carousel'
+                  ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/20'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5" />
+                <span>Carousel Multi-Slide</span>
+              </div>
+              <span className="text-[9px] font-normal opacity-80">Elemen adaptif per slide</span>
+            </button>
           </div>
 
           {/* Prompt Input Box */}
@@ -718,12 +797,35 @@ export default function App() {
                     />
                   </div>
 
+                  {/* Single Post: 3-4 Insight Pillars */}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase text-slate-400">3 Poin Insight</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold uppercase text-slate-400">
+                        Pilar Insight ({content.points.length} Pilar)
+                      </label>
+                      {content.points.length < 4 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newPt = {
+                              number: `0${content.points.length + 1}`,
+                              title: 'PILAR TAMBAHAN',
+                              desc: 'Insight taktis pelengkap untuk memperkaya materi.',
+                              tag: 'EKSEKUSI'
+                            };
+                            setContent({ ...content, points: [...content.points, newPt] });
+                          }}
+                          className="text-[10px] text-amber-400 hover:text-amber-300 font-bold"
+                        >
+                          + Tambah Pilar
+                        </button>
+                      )}
+                    </div>
+
                     {content.points.map((pt, idx) => (
                       <div key={idx} className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-mono text-amber-400 font-bold">#{pt.number}</span>
+                          <span className="text-[10px] font-mono text-amber-400 font-bold">#{pt.number || `0${idx + 1}`}</span>
                           <input
                             type="text"
                             value={pt.title}
@@ -732,9 +834,33 @@ export default function App() {
                               updated[idx].title = e.target.value;
                               setContent({ ...content, points: updated });
                             }}
-                            placeholder={`Judul Poin ${idx + 1}`}
+                            placeholder={`Judul Pilar ${idx + 1}`}
                             className="flex-1 text-xs font-bold px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-white"
                           />
+                          <input
+                            type="text"
+                            value={pt.tag || ''}
+                            onChange={(e) => {
+                              const updated = [...content.points];
+                              updated[idx].tag = e.target.value;
+                              setContent({ ...content, points: updated });
+                            }}
+                            placeholder="Tag"
+                            className="w-16 text-[10px] font-mono uppercase px-1.5 py-1 bg-slate-900 border border-slate-700 rounded-lg text-amber-300"
+                          />
+                          {content.points.length > 2 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = content.points.filter((_, i) => i !== idx);
+                                setContent({ ...content, points: updated });
+                              }}
+                              className="text-slate-500 hover:text-rose-400 text-xs px-1"
+                              title="Hapus Pilar"
+                            >
+                              ✕
+                            </button>
+                          )}
                         </div>
                         <input
                           type="text"
@@ -744,11 +870,68 @@ export default function App() {
                             updated[idx].desc = e.target.value;
                             setContent({ ...content, points: updated });
                           }}
-                          placeholder={`Deskripsi Poin ${idx + 1}`}
+                          placeholder={`Deskripsi Pilar ${idx + 1}`}
                           className="w-full text-xs px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-slate-300"
                         />
                       </div>
                     ))}
+                  </div>
+
+                  {/* Single Post: Takeaway / Blueprint Formula Box */}
+                  <div className="p-3 bg-amber-400/5 rounded-2xl border border-amber-400/20 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold uppercase text-amber-400 flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3" />
+                        <span>Kotak Formula / Key Takeaway</span>
+                      </label>
+                      <span className="text-[9px] text-slate-400 font-mono">1-Feed Summary</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={content.takeawayBox?.label || 'FORMULA EKSEKUSI'}
+                        onChange={(e) => setContent({
+                          ...content,
+                          takeawayBox: {
+                            label: e.target.value,
+                            formula: content.takeawayBox?.formula || '',
+                            metric: content.takeawayBox?.metric
+                          }
+                        })}
+                        placeholder="Label (Contoh: FORMULA EKSEKUSI)"
+                        className="text-xs px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-amber-300 font-bold"
+                      />
+                      <input
+                        type="text"
+                        value={content.takeawayBox?.metric || ''}
+                        onChange={(e) => setContent({
+                          ...content,
+                          takeawayBox: {
+                            label: content.takeawayBox?.label || 'FORMULA EKSEKUSI',
+                            formula: content.takeawayBox?.formula || '',
+                            metric: e.target.value
+                          }
+                        })}
+                        placeholder="Target Metrik (Misal: 3.4X CLOSING)"
+                        className="text-xs px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono"
+                      />
+                    </div>
+
+                    <textarea
+                      rows={2}
+                      value={content.takeawayBox?.formula || ''}
+                      onChange={(e) => setContent({
+                        ...content,
+                        takeawayBox: {
+                          label: content.takeawayBox?.label || 'FORMULA EKSEKUSI',
+                          formula: e.target.value,
+                          metric: content.takeawayBox?.metric
+                        }
+                      })}
+                      placeholder="Rumusan singkat: Solusi A + Solusi B = Hasil Konkret"
+                      className="w-full text-xs px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200"
+                    />
                   </div>
 
                   <div className="space-y-1">
@@ -807,6 +990,97 @@ export default function App() {
                         className="w-full text-xs px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white"
                       />
                     </div>
+
+                    {/* Adaptive Slide Specific Fields */}
+                    {activeSlide.slideType === 'problem' && (
+                      <div className="p-3 bg-rose-500/10 rounded-2xl border border-rose-500/30 space-y-2">
+                        <span className="text-[10px] font-black uppercase text-rose-400 block">
+                          Diagnosa Masalah (Problem Card)
+                        </span>
+                        <input
+                          type="text"
+                          value={activeSlide.problemData?.warningTag || 'DIAGNOSA AKAR MASALAH'}
+                          onChange={(e) => {
+                            const updated = [...carouselSlides];
+                            updated[activeSlideIndex].problemData = {
+                              ...(updated[activeSlideIndex].problemData || { painPoint: '', impactText: '' }),
+                              warningTag: e.target.value
+                            };
+                            setCarouselSlides(updated);
+                          }}
+                          placeholder="Tag Warning (Misal: FATAL TRAP)"
+                          className="w-full text-xs px-2.5 py-1.5 bg-slate-950 border border-rose-500/40 rounded-lg text-rose-300 font-bold"
+                        />
+                        <textarea
+                          rows={2}
+                          value={activeSlide.problemData?.painPoint || ''}
+                          onChange={(e) => {
+                            const updated = [...carouselSlides];
+                            updated[activeSlideIndex].problemData = {
+                              ...(updated[activeSlideIndex].problemData || { warningTag: 'FATAL TRAP', impactText: '' }),
+                              painPoint: e.target.value
+                            };
+                            setCarouselSlides(updated);
+                          }}
+                          placeholder="Akar Masalah Utama"
+                          className="w-full text-xs px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-slate-200"
+                        />
+                        <input
+                          type="text"
+                          value={activeSlide.problemData?.impactText || ''}
+                          onChange={(e) => {
+                            const updated = [...carouselSlides];
+                            updated[activeSlideIndex].problemData = {
+                              ...(updated[activeSlideIndex].problemData || { warningTag: 'FATAL TRAP', painPoint: '' }),
+                              impactText: e.target.value
+                            };
+                            setCarouselSlides(updated);
+                          }}
+                          placeholder="Dampak Buruk Jika Dibiarkan"
+                          className="w-full text-xs px-2.5 py-1.5 bg-slate-950 border border-slate-700 rounded-lg text-rose-300 text-[11px]"
+                        />
+                      </div>
+                    )}
+
+                    {activeSlide.slideType === 'comparison' && (
+                      <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
+                        <span className="text-[10px] font-black uppercase text-cyan-400 block">
+                          Komparasi DO vs DON'T
+                        </span>
+                        <div className="space-y-1">
+                          <label className="text-[9px] font-bold text-rose-400 uppercase">HINDARI (DON'T):</label>
+                          <input
+                            type="text"
+                            value={activeSlide.comparisonData?.dontDesc || ''}
+                            onChange={(e) => {
+                              const updated = [...carouselSlides];
+                              updated[activeSlideIndex].comparisonData = {
+                                ...(updated[activeSlideIndex].comparisonData || { dontTitle: "HINDARI INI (DON'T)", doTitle: "LAKUKAN INI (DO)", doDesc: '' }),
+                                dontDesc: e.target.value
+                              };
+                              setCarouselSlides(updated);
+                            }}
+                            className="w-full text-xs px-2 py-1 bg-slate-900 border border-rose-500/30 rounded-lg text-rose-200"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[9px] font-bold text-emerald-400 uppercase">LAKUKAN (DO):</label>
+                          <input
+                            type="text"
+                            value={activeSlide.comparisonData?.doDesc || ''}
+                            onChange={(e) => {
+                              const updated = [...carouselSlides];
+                              updated[activeSlideIndex].comparisonData = {
+                                ...(updated[activeSlideIndex].comparisonData || { dontTitle: "HINDARI INI (DON'T)", doTitle: "LAKUKAN INI (DO)", dontDesc: '' }),
+                                doDesc: e.target.value
+                              };
+                              setCarouselSlides(updated);
+                            }}
+                            className="w-full text-xs px-2 py-1 bg-slate-900 border border-emerald-500/30 rounded-lg text-emerald-200"
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
